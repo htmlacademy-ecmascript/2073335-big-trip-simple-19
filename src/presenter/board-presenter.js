@@ -1,26 +1,25 @@
-import NewFormView from '../view/creation-form-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import WaypointListView from '../view/waypoint-list-view.js';
-import {render} from '../render.js';
-
+import {render, RenderPosition} from '../render.js';
+import TripEventsItemView from '../view/trip-events-item-view.js';
+import TripEventsListView from '../view/trip-events-list-view.js';
 
 const WAYPOINTS_COUNT = 3;
 
 export default class BoardPresenter {
-  boardComponent = new WaypointListView();
+  boardComponent = new TripEventsListView();
 
   constructor({boardContainer}) {
     this.boardContainer = boardContainer;
   }
 
   init() {
-    render(new EditFormView(), this.boardComponent.getElement(), 'afterbegin');
-    render(this.boardComponent, this.boardContainer);
 
 
     for (let i = 0; i < WAYPOINTS_COUNT; i++) {
-      render(new NewFormView(), this.boardComponent.getElement(), 'afterbegin');
-
+      render(new TripEventsItemView(), this.boardComponent.getElement(), RenderPosition.AFTERBEGIN);
     }
+    render(new EditFormView(), this.boardComponent.getElement(), RenderPosition.AFTERBEGIN);
+    render(this.boardComponent, this.boardContainer);
+
   }
 }
