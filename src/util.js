@@ -18,4 +18,3 @@ const getRandomNumber = (a, b) => {
   return Math.floor(result);
 };
 export {getRandomArrayElement, getRandomNumber, humanizeEventDueDate};
-

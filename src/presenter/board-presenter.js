@@ -5,8 +5,6 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import SortView from '../view/sort-view.js';
 import TripEventsView from '../view/trip-events-view.js';
 
-//const WAYPOINTS_COUNT = 3;
-
 export default class BoardPresenter {
   TripEventsView = new TripEventsView();
   TripEventsListView = new TripEventsListView();
