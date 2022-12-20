@@ -13,18 +13,22 @@ export default class BoardPresenter {
   constructor({container, pointsModel}) {
     this.container = container;
     this.pointsModel = pointsModel;
+
   }
 
   init() {
+    this.eventPoints = this.pointsModel.points;
+    this.eventDestinations = this.pointsModel.tripDestinations;
+    this.eventOffersByType = this.pointsModel.offersByType;
 
-    this.listPoints = [...this.pointsModel.getPoints()];
+    this.eventPoints.forEach((event) => {
+      render(new TripEventsItemView({ point: event, tripDestinations: this.eventDestinations, tripTypes: this.eventOffersByType}), this.TripEventsListView.getElement());
+    });
 
-    for (let i = 0; i < this.listPoints.length; i++) {
-      render(new TripEventsItemView({point: this.listPoints[i]}), this.TripEventsListView.getElement());
-    }
     render(new SortView(), this.TripEventsView.getElement());
-    render(new EditFormView(this.listPoints[0]), this.TripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
+    render(new EditFormView({point: this.eventPoints[0], tripDestinations: this.eventDestinations, tripTypes: this.eventOffersByType}), this.TripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
     render(this.TripEventsListView, this.TripEventsView.getElement());
     render(this.TripEventsView, this.container);
   }
 }
+

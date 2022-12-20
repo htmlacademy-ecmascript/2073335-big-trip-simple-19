@@ -1,25 +1,25 @@
 import {createElement} from '../render.js';
 import { humanizeEventDueDate } from '../util.js';
-import { destinations, offersByTypes } from '../mock/mock.js';
 
-const createTemplate = (point) => {
-  const {type, destination, offers, basePrice, dateFrom, dateTo} = point;
+function createTemplate(point, tripDestinations, tripTypes) {
+  const { basePrice, type, destination, offers, dateFrom, dateTo } = point;
 
   const dateStart = humanizeEventDueDate(dateFrom, 'YY/MM/DD HH:mm');
   const dateEnd = humanizeEventDueDate(dateTo, 'YY/MM/DD HH:mm');
 
-  const pointDestination = destinations.find((item) => destination === item.id);
-  const offerByType = offersByTypes.find((offer) => offer.type === type);
+  const destinations = tripDestinations.find((item) => item.id === destination);
+  const offerByType = tripTypes.find((offer) => offer.type === type);
+  const tripOffers = offerByType.offers;
 
-
-  const createTripTypeTemplate = offersByTypes.map((item) =>
+  const createTripTypeTemplate = tripTypes.map((item) =>
     `<div class="event__type-item">
       <input id="event-type-${item.type}-${item.offers.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${item.type.isChecked ? 'checked' : ''}">
       <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${item.offers.id}">${item.type}</label>
     </div>`).join('');
 
-  const createOffersTemplate = offerByType.offers.map((offer) =>
-    `<div class="event__offer-selector">
+  const createOffersTemplate =
+    tripOffers.map((offer) =>
+      `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${offers.includes(offer.id) ? 'checked' : ''}>
         <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
@@ -28,7 +28,7 @@ const createTemplate = (point) => {
         </label>
       </div>`).join('');
 
-  const cities = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
+  const cities = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
   return (
     `<li class="trip-events__item">
@@ -51,7 +51,7 @@ const createTemplate = (point) => {
             <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${pointDestination.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinations.name}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
@@ -85,26 +85,29 @@ const createTemplate = (point) => {
           </section>
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${pointDestination.description}</p>
+            <p class="event__destination-description">${destinations.description}</p>
           </section>
         </section>
       </form>
     </li>`
   );
-};
+}
 
 export default class EditFormView {
-  constructor(point) {
+
+  constructor({ point, tripDestinations, tripTypes }) {
     this.point = point;
+    this.tripDestinations = tripDestinations;
+    this.tripTypes = tripTypes;
   }
 
   getTemplate() {
-    return createTemplate(this.point);
+    return createTemplate(this.point, this.tripDestinations, this.tripTypes);
   }
 
   getElement() {
     if (!this.element) {
-      this.element = createElement(this.getTemplate());
+      this.element = createElement(this.template);
     }
 
     return this.element;

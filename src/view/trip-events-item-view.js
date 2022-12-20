@@ -1,9 +1,8 @@
 import { createElement } from '../render.js';
 import { humanizeEventDueDate } from '../util.js';
-import { destinations, offersByTypes } from '../mock/mock.js';
 
-const createTemplate = (point) => {
-  const {basePrice, destination, type, offers, dateFrom, dateTo} = point;
+function createTemplate(point, tripDestinations, tripTypes) {
+  const { basePrice, destination, type, offers, dateFrom, dateTo } = point;
 
   const date = humanizeEventDueDate(dateFrom, 'MMM DD');
   const timeStart = humanizeEventDueDate(dateFrom, 'HH:mm');
@@ -11,10 +10,9 @@ const createTemplate = (point) => {
   const timeStartInDateTime = humanizeEventDueDate(dateFrom, 'YYYY-MM-DDTHH:mm');
   const timeEndInDateTime = humanizeEventDueDate(dateTo, 'YYYY-MM-DDTHH:mm');
 
-  const pointDestination = destinations.find((item) => destination === item.id);
-  const pointOffersType = offersByTypes.find((offer) => offer.type === type);
-  const offersChecked = pointOffersType.offers
-    .filter((offer) => offers.includes(offer.id));
+  const destinations = tripDestinations.find((item) => item.id === destination);
+  const offersType = tripTypes.find((offer) => offer.type === type);
+  const offersChecked = offersType.offers.filter((offer) => offers.includes(offer.id));
 
   const offersList = () => {
     if (!offersChecked.length) {
@@ -41,7 +39,7 @@ const createTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${pointDestination.name}</h3>
+        <h3 class="event__title">${type} ${destinations.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${timeStartInDateTime}">${timeStart}</time>
@@ -62,16 +60,17 @@ const createTemplate = (point) => {
       </div>
     </li>`
   );
-};
+}
 
 export default class TripEventsItemView {
-  constructor({point}) {
+  constructor({ point, tripDestinations, tripTypes }) {
     this.point = point;
-
+    this.tripDestinations = tripDestinations;
+    this.tripTypes = tripTypes;
   }
 
   getTemplate() {
-    return createTemplate(this.point);
+    return createTemplate(this.point, this.tripDestinations, this.tripTypes);
   }
 
   getElement() {

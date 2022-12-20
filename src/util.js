@@ -4,9 +4,12 @@ function humanizeEventDueDate(dueDate, dateFormat) {
   return dueDate ? dayjs(dueDate).format(dateFormat) : '';
 }
 
-const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
 
-const getRandomNumber = (a, b) => {
+function getRandomArrayItem (items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function getRandomNumber(a, b) {
 
   if (a < 0 || b < 0) {
     return NaN;
@@ -16,5 +19,7 @@ const getRandomNumber = (a, b) => {
   const result = Math.random() * (upper - lower + 1) + lower;
 
   return Math.floor(result);
-};
-export {getRandomArrayElement, getRandomNumber, humanizeEventDueDate};
+}
+
+
+export {getRandomArrayItem, getRandomNumber, humanizeEventDueDate};
