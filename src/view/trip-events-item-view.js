@@ -1,50 +1,53 @@
 import { createElement } from '../render.js';
-import { humanizeEventDueDate } from '../util.js';
+import { humanizeDate } from '../util.js';
+
 
 function createTemplate(point, tripDestinations, tripTypes) {
   const { basePrice, destination, type, offers, dateFrom, dateTo } = point;
 
-  const date = humanizeEventDueDate(dateFrom, 'MMM DD');
-  const timeStart = humanizeEventDueDate(dateFrom, 'HH:mm');
-  const timeEnd = humanizeEventDueDate(dateTo, 'HH:mm');
-  const timeStartInDateTime = humanizeEventDueDate(dateFrom, 'YYYY-MM-DDTHH:mm');
-  const timeEndInDateTime = humanizeEventDueDate(dateTo, 'YYYY-MM-DDTHH:mm');
+  const TIME = {
+    date: humanizeDate(dateFrom, 'MMM DD'),
+    timeStart: humanizeDate(dateFrom, 'HH:mm'),
+    timeEnd: humanizeDate(dateTo, 'HH:mm'),
+    timeStartInDateTime: humanizeDate(dateFrom, 'YYYY-MM-DDTHH:mm'),
+    timeEndInDateTime: humanizeDate(dateTo, 'YYYY-MM-DDTHH:mm')
+  };
 
-  const destinations = tripDestinations.find((item) => item.id === destination);
+  const destinationInfo = tripDestinations.find((item) => item.id === destination);
   const offersType = tripTypes.find((offer) => offer.type === type);
-  const offersChecked = offersType.offers.filter((offer) => offers.includes(offer.id));
+  const checkedOffers = offersType.offers.filter((offer) => offers.includes(offer.id));
 
-  const offersList = () => {
-    if (!offersChecked.length) {
+  const createoffersList = () => {
+    if (checkedOffers.length === 0) {
       return (
         `<li class="event__offer">
           <span class="event__offer-title">No additional offers</span>
         </li>`
       );
-    } else {
-      const offersCheckedTemplate = offersChecked.map((offer) =>
-        `<li class="event__offer">
+    }
+    const checkedOffersTemplate = checkedOffers.map((offer) =>
+      `<li class="event__offer">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>`).join('');
-      return offersCheckedTemplate;
-    }
+    return checkedOffersTemplate;
+
   };
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${timeStartInDateTime}">${date}</time>
+        <time class="event__date" datetime="${TIME.timeStartInDateTime}">${TIME.date}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${destinations.name}</h3>
+        <h3 class="event__title">${type} ${destinationInfo.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${timeStartInDateTime}">${timeStart}</time>
+            <time class="event__start-time" datetime="${TIME.timeStartInDateTime}">${TIME.timeStart}</time>
             &mdash;
-            <time class="event__end-time" datetime="${timeEndInDateTime}">${timeEnd}</time>
+            <time class="event__end-time" datetime="${TIME.timeEndInDateTime}">${TIME.timeEnd}</time>
           </p>
         </div>
         <p class="event__price">
@@ -52,7 +55,7 @@ function createTemplate(point, tripDestinations, tripTypes) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          ${offersList()}
+          ${createoffersList()}
         </ul>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>

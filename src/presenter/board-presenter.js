@@ -6,8 +6,8 @@ import SortView from '../view/sort-view.js';
 import TripEventsView from '../view/trip-events-view.js';
 
 export default class BoardPresenter {
-  TripEventsView = new TripEventsView();
-  TripEventsListView = new TripEventsListView();
+  tripEventsView = new TripEventsView();
+  tripEventsListView = new TripEventsListView();
 
 
   constructor({container, pointsModel}) {
@@ -17,18 +17,18 @@ export default class BoardPresenter {
   }
 
   init() {
-    this.eventPoints = this.pointsModel.points;
-    this.eventDestinations = this.pointsModel.tripDestinations;
-    this.eventOffersByType = this.pointsModel.offersByType;
+    this.pointsModels = this.pointsModel.points;
+    this.pointsDestinations = this.pointsModel.tripDestinations;
+    this.pointOffersByTypes = this.pointsModel.offersByType;
 
-    this.eventPoints.forEach((event) => {
-      render(new TripEventsItemView({ point: event, tripDestinations: this.eventDestinations, tripTypes: this.eventOffersByType}), this.TripEventsListView.getElement());
+    this.pointsModels.forEach((event) => {
+      render(new TripEventsItemView({ point: event, tripDestinations: this.pointsDestinations, tripTypes: this.pointOffersByTypes}), this.tripEventsListView.getElement());
     });
 
-    render(new SortView(), this.TripEventsView.getElement());
-    render(new EditFormView({point: this.eventPoints[0], tripDestinations: this.eventDestinations, tripTypes: this.eventOffersByType}), this.TripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
-    render(this.TripEventsListView, this.TripEventsView.getElement());
-    render(this.TripEventsView, this.container);
+    render(new SortView(), this.tripEventsView.getElement());
+    render(new EditFormView({point: this.pointsModels[0], tripDestinations: this.pointsDestinations, tripTypes: this.pointOffersByTypes}), this.tripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
+    render(this.tripEventsListView, this.tripEventsView.getElement());
+    render(this.tripEventsView, this.container);
   }
 }
 
