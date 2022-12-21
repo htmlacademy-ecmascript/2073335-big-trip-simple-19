@@ -24,7 +24,6 @@ function createTemplate(point, tripDestinations, tripTypes) {
   const offerByType = tripTypes.find((offer) => offer.type === type);
   const tripOffers = offerByType.offers;
 
-
   const tripTypeTemplate = tripTypes.map((item) =>
     `<div class="event__type-item">
       <input id="event-type-${item.type}-${item.offers.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${item.type.isChecked ? 'checked' : ''}">
@@ -43,6 +42,7 @@ function createTemplate(point, tripDestinations, tripTypes) {
       </div>`).join('');
 
   const citiesStringTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
+
 
   return (
     `<li class="trip-events__item">
@@ -91,11 +91,20 @@ function createTemplate(point, tripDestinations, tripTypes) {
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers">
+        ${
+    offersTemplate.length > 0 ?
+      `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
             ${offersTemplate}
             </div>
+          </section>`
+      :
+      `<section class="event__section  event__section--offers" hidden >
+            <h3 class="event__section-title  event__section-title--offers"></h3>
+          </section>`
+
+    }
           </section>
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
