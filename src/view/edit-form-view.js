@@ -1,33 +1,48 @@
 import {createElement} from '../render.js';
 import { getRandomNumber, humanizeDate, capitalize } from '../util.js';
 
-const EMPTY_POINT = {
-  basePrice: '',
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  destination: '',
-  id: 0,
-  isFavorite: false,
-  offers: [],
-  type: 'flight',
-};
+function createEmptyPoint() {
+  return {
+    basePrice: 0,
+    dateFrom: new Date(),
+    dateTo: new Date(),
+    destination: {
+      id: null,
+      description: null,
+      name: 'kekes',
+      pictures: [{src: `https://loremflickr.com/248/152?random=${getRandomNumber}`,
+      }]
+    },
+    offers: [],
+    type: 'flight',
+  };
+}
 
-function createTemplate(point, tripDestinations, tripTypes) {
+function createTemplate(point, tripDestinations, mockOffers) {
   const { basePrice, type, destination, offers, dateFrom, dateTo } = point;
 
-  const TIME = {
-    dateStart: humanizeDate(dateFrom, 'YY/MM/DD HH:mm'),
-    dateEnd: humanizeDate(dateTo, 'YY/MM/DD HH:mm')
-  };
-
-  const destinations = tripDestinations.find((item) => item.id === destination);
-  const offerByType = tripTypes.find((offer) => offer.type === type);
+  const destinationInfo = tripDestinations.find((item) => item.id === destination);
+  const offerByType = mockOffers.find((offer) => offer.type === type);
   const tripOffers = offerByType.offers;
+  const picture = tripDestinations.find((pictures) => pictures === pictures);
+  const picturesforTemplate = picture.pictures;
 
-  const tripTypeTemplate = tripTypes.map((item) =>
+  const pictureTemplate =
+picturesforTemplate.map((pic) => `
+<div class="event__photos-container">
+            <div class="event__photos-tape">
+              <img class="event__photo" src="${pic.src}" alt="Event photo">
+              <img class="event__photo" src="${pic.src}" alt="Event photo">
+              <img class="event__photo" src="${pic.src}" alt="Event photo">
+              <img class="event__photo" src="${pic.src}" alt="Event photo">
+              <img class="event__photo" src="${pic.src}" alt="Event photo">
+            </div>
+          </div>`).join('');
+
+  const tripTypeTemplate = mockOffers.map((item) =>
     `<div class="event__type-item">
-      <input id="event-type-${item.type}-${item.offers.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${item.type.isChecked ? 'checked' : ''}">
-      <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${item.offers.id}">${capitalize(item.type)}</label>
+      <input id="event-type-${item.type}-${point.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${item.type.isChecked ? 'checked' : ''}">
+      <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${point.id}">${capitalize(item.type)}</label>
     </div>`).join('');
 
   const offersTemplate =
@@ -41,7 +56,7 @@ function createTemplate(point, tripDestinations, tripTypes) {
         </label>
       </div>`).join('');
 
-  const citiesStringTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
+  const citiesOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
 
   return (
@@ -65,17 +80,17 @@ function createTemplate(point, tripDestinations, tripTypes) {
             <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinations.name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${citiesStringTemplate}
+              ${citiesOptionValueTemplate}
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${TIME.dateStart}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDate(dateFrom, 'YY/MM/DD HH:mm')}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${TIME.dateEnd}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDate(dateTo, 'YY/MM/DD HH:mm')}">
           </div>
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
@@ -99,25 +114,16 @@ function createTemplate(point, tripDestinations, tripTypes) {
             ${offersTemplate}
             </div>
           </section>`
-      :
-      `<section class="event__section  event__section--offers" hidden >
-            <h3 class="event__section-title  event__section-title--offers"></h3>
-          </section>`
+      : ''
 
     }
           </section>
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${destinations.description}</p>
+            <p class="event__destination-description">${destinationInfo?.description }</p>
             
             <div class="event__photos-container">
-            <div class="event__photos-tape">
-              <img class="event__photo" src="https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}" alt="Event photo">
-              <img class="event__photo" src="https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}">
-              <img class="event__photo" src="https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}">
-              <img class="event__photo" src="https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}">
-              <img class="event__photo" src="https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}">
-            </div>
+            ${pictureTemplate}
           </div>
             </section>
         </section>
@@ -128,14 +134,14 @@ function createTemplate(point, tripDestinations, tripTypes) {
 
 export default class EditFormView {
 
-  constructor({ point = EMPTY_POINT, tripDestinations, tripTypes }) {
+  constructor({ point = createEmptyPoint(), tripDestinations, mockOffers}) {
     this.point = point;
     this.tripDestinations = tripDestinations;
-    this.tripTypes = tripTypes;
+    this.mockOffers = mockOffers;
   }
 
   getTemplate() {
-    return createTemplate(this.point, this.tripDestinations, this.tripTypes);
+    return createTemplate(this.point, this.tripDestinations, this.mockOffers);
   }
 
   getElement() {

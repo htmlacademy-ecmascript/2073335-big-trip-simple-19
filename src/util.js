@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
-function humanizeDate(dueDate, dateFormat) {
-  return dueDate ? dayjs(dueDate).format(dateFormat) : '';
+function humanizeDate(eventDate, dateFormat) {
+  return eventDate ? dayjs(eventDate).format(dateFormat) : '';
 }
 
 
@@ -21,8 +21,8 @@ function getRandomNumber(a, b) {
   return Math.floor(result);
 }
 
-function capitalize(str) {
-  return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+function capitalize(text) {
+  return text.charAt(0).toUpperCase().concat(text.slice(1));
 }
 
 export {getRandomArrayItem, getRandomNumber, humanizeDate, capitalize};

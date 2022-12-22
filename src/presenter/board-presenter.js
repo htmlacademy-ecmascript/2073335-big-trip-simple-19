@@ -21,12 +21,12 @@ export default class BoardPresenter {
     this.pointsDestinations = this.pointsModel.tripDestinations;
     this.pointOffersByTypes = this.pointsModel.offersByType;
 
-    this.pointsModels.forEach((event) => {
-      render(new TripEventsItemView({ point: event, tripDestinations: this.pointsDestinations, tripTypes: this.pointOffersByTypes}), this.tripEventsListView.getElement());
+    this.pointsModels.forEach((points) => {
+      render(new TripEventsItemView({ point: points, tripDestinations: this.pointsDestinations, mockOffers: this.pointOffersByTypes}), this.tripEventsListView.getElement());
     });
 
     render(new SortView(), this.tripEventsView.getElement());
-    render(new EditFormView({point: this.pointsModels[0], tripDestinations: this.pointsDestinations, tripTypes: this.pointOffersByTypes}), this.tripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
+    render(new EditFormView({point: this.pointsModels[0], tripDestinations: this.pointsDestinations, mockOffers: this.pointOffersByTypes}), this.tripEventsListView.getElement(), RenderPosition.AFTERBEGIN);
     render(this.tripEventsListView, this.tripEventsView.getElement());
     render(this.tripEventsView, this.container);
   }

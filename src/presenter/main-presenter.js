@@ -16,7 +16,7 @@ export default class MainPresenter {
 
   init() {
 
-    render(new FilterView, this.tripControlsFilters.getElement());
+    render(new FilterView(), this.tripControlsFilters.getElement());
     render(this.tripControlsFilters, this.tripMainView.getElement());
     render(new NewEventButtonView(), this.tripMainView.getElement());
     render(this.tripMainView, this.container);

@@ -132,7 +132,7 @@ const tripDestinations = [
     name: 'Chamonix',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomNumber}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
       }
     ]
   },
@@ -142,7 +142,7 @@ const tripDestinations = [
     name: 'Geneve',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomNumber}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
       }
     ]
   },
@@ -152,7 +152,7 @@ const tripDestinations = [
     name: 'Amsterdam',
     pictures: [
       {
-        src: `https://loremflickr.com/248/152?random=${getRandomNumber}`,
+        src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
       }
     ]
   }
@@ -242,6 +242,6 @@ const MOCK_POINTS = [
   }
 ];
 
-const getRandomPoint = () => (getRandomArrayItem(MOCK_POINTS));
+const getRandomPoint = () => getRandomArrayItem(MOCK_POINTS);
 
 export { tripDestinations, offersByType, getRandomPoint};
