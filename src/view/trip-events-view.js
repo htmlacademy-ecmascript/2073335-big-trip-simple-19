@@ -1,10 +1,12 @@
 import { createElement } from '../render.js';
 
 function createTemplate() {
-  return (`<section class="trip-events">
-<h2 class="visually-hidden">Trip events</h2>
-</section>`
-  );}
+  return (
+    `<section class="trip-events">
+      <h2 class="visually-hidden">Trip events</h2>
+    </section>`
+  );
+}
 
 export default class TripEventsView{
   getTemplate() {

@@ -1,12 +1,12 @@
 import { createElement } from '../render.js';
 import { humanizeDate } from '../util.js';
 
-function createTemplate(point, tripDestinations, mockOffers) {
+function createTemplate(point, tripDestinations, allOffers) {
   const { basePrice, destination, type, offers, dateFrom, dateTo } = point;
 
 
   const destinationInfo = tripDestinations.find((item) => item.id === destination);
-  const offersType = mockOffers.find((offer) => offer.type === type);
+  const offersType = allOffers.find((offer) => offer.type === type);
   const checkedOffers = offersType.offers.filter((offer) => offers.includes(offer.id));
 
   const createOffersListTemplate = () => {
@@ -56,14 +56,14 @@ function createTemplate(point, tripDestinations, mockOffers) {
 }
 
 export default class TripEventsItemView {
-  constructor({ point, tripDestinations, mockOffers }) {
+  constructor({ point, tripDestinations, allOffers }) {
     this.point = point;
     this.tripDestinations = tripDestinations;
-    this.mockOffers = mockOffers;
+    this.allOffers = allOffers;
   }
 
   getTemplate() {
-    return createTemplate(this.point, this.tripDestinations, this.mockOffers);
+    return createTemplate(this.point, this.tripDestinations, this.allOffers);
   }
 
   getElement() {

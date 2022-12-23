@@ -1,47 +1,36 @@
 import {createElement} from '../render.js';
-import { getRandomNumber, humanizeDate, capitalize } from '../util.js';
+import { humanizeDate, capitalize } from '../util.js';
 
 function createEmptyPoint() {
   return {
     basePrice: 0,
     dateFrom: new Date(),
     dateTo: new Date(),
-    destination: {
-      id: null,
-      description: null,
-      name: 'kekes',
-      pictures: [{src: `https://loremflickr.com/248/152?random=${getRandomNumber}`,
-      }]
-    },
+    destination: 0,
     offers: [],
     type: 'flight',
   };
 }
 
-function createTemplate(point, tripDestinations, mockOffers) {
+function createTemplate(point, tripDestinations, allOffers) {
   const { basePrice, type, destination, offers, dateFrom, dateTo } = point;
 
   const destinationInfo = tripDestinations.find((item) => item.id === destination);
-  const offerByType = mockOffers.find((offer) => offer.type === type);
+  const offerByType = allOffers.find((offer) => offer.type === type);
   const tripOffers = offerByType.offers;
-  const picture = tripDestinations.find((pictures) => pictures === pictures);
-  const picturesforTemplate = picture.pictures;
+  const picturesforTemplate = destinationInfo?.pictures;
 
   const pictureTemplate =
-picturesforTemplate.map((pic) => `
-<div class="event__photos-container">
+picturesforTemplate?.map((photos = destinationInfo) => (
+  `<div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="${pic.src}" alt="Event photo">
-              <img class="event__photo" src="${pic.src}" alt="Event photo">
-              <img class="event__photo" src="${pic.src}" alt="Event photo">
-              <img class="event__photo" src="${pic.src}" alt="Event photo">
-              <img class="event__photo" src="${pic.src}" alt="Event photo">
+              <img class="event__photo" src="${photos.src}" alt="${photos.description}">
             </div>
-          </div>`).join('');
+          </div>`)).join('');
 
-  const tripTypeTemplate = mockOffers.map((item) =>
+  const tripTypeTemplate = allOffers.map((item) =>
     `<div class="event__type-item">
-      <input id="event-type-${item.type}-${point.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${item.type.isChecked ? 'checked' : ''}">
+      <input id="event-type-${item.type}-${point.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}" ${type === item.type ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${point.id}">${capitalize(item.type)}</label>
     </div>`).join('');
 
@@ -56,7 +45,7 @@ picturesforTemplate.map((pic) => `
         </label>
       </div>`).join('');
 
-  const citiesOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
+  const destinationsOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
 
   return (
@@ -80,9 +69,13 @@ picturesforTemplate.map((pic) => `
             <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name}" list="destination-list-1">
+            ${
+    destinationInfo?.name.length > 1 ?
+      `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              ${citiesOptionValueTemplate}
+              ${destinationsOptionValueTemplate}` : ''
+    }
+        
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
@@ -117,15 +110,17 @@ picturesforTemplate.map((pic) => `
       : ''
 
     }
-          </section>
-          <section class="event__section  event__section--destination">
+    </section>
+
+    ${destinationInfo?.description.length > 1 ?
+      `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${destinationInfo?.description }</p>
-            
-            <div class="event__photos-container">
             ${pictureTemplate}
           </div>
-            </section>
+          </section>`
+      : ''
+    }
         </section>
       </form>
     </li>`
@@ -134,14 +129,14 @@ picturesforTemplate.map((pic) => `
 
 export default class EditFormView {
 
-  constructor({ point = createEmptyPoint(), tripDestinations, mockOffers}) {
+  constructor({ point = createEmptyPoint(), tripDestinations, allOffers}) {
     this.point = point;
     this.tripDestinations = tripDestinations;
-    this.mockOffers = mockOffers;
+    this.allOffers = allOffers;
   }
 
   getTemplate() {
-    return createTemplate(this.point, this.tripDestinations, this.mockOffers);
+    return createTemplate(this.point, this.tripDestinations, this.allOffers);
   }
 
   getElement() {

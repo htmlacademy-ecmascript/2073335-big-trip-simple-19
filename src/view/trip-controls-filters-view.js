@@ -1,10 +1,11 @@
 import { createElement } from '../render.js';
 
 function createTemplate() {
-  return ( `<div class="trip-main__trip-controls  trip-controls">
+  return (
+    `<div class="trip-main__trip-controls  trip-controls">
             <div class="trip-controls__filters">
             </div>
-          </div>`
+     </div>`
   );}
 
 export default class TripControlsFiltersView {

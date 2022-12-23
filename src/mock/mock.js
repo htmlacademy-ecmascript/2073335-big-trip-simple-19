@@ -1,4 +1,18 @@
-import { getRandomArrayItem, getRandomNumber} from '../util.js';
+function getRandomArrayItem (items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function getRandomNumber(a, b) {
+
+  if (a < 0 || b < 0) {
+    return NaN;
+  }
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+
+  return Math.floor(result);
+}
 
 const offersByType = [
   {
@@ -133,6 +147,7 @@ const tripDestinations = [
     pictures: [
       {
         src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
+        description: 'Chamonix parliament building',
       }
     ]
   },
@@ -143,6 +158,7 @@ const tripDestinations = [
     pictures: [
       {
         src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
+        description: 'Geneve parliament building',
       }
     ]
   },
@@ -153,6 +169,7 @@ const tripDestinations = [
     pictures: [
       {
         src: `https://loremflickr.com/248/152?random=${getRandomNumber(1,10)}`,
+        description: 'Amsterdam parliament building',
       }
     ]
   }

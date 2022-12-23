@@ -7,7 +7,7 @@ import TripMainView from '../view/trip-main-view.js';
 
 export default class MainPresenter {
   tripMainView = new TripMainView();
-  tripControlsFilters = new TripControlsFiltersView();
+  TripControlsFiltersView = new TripControlsFiltersView();
 
 
   constructor ({container}) {
@@ -16,8 +16,8 @@ export default class MainPresenter {
 
   init() {
 
-    render(new FilterView(), this.tripControlsFilters.getElement());
-    render(this.tripControlsFilters, this.tripMainView.getElement());
+    render(new FilterView(), this.TripControlsFiltersView.getElement());
+    render(this.TripControlsFiltersView, this.tripMainView.getElement());
     render(new NewEventButtonView(), this.tripMainView.getElement());
     render(this.tripMainView, this.container);
   }
