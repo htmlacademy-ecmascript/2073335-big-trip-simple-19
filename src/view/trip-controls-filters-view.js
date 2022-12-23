@@ -2,12 +2,13 @@ import { createElement } from '../render.js';
 
 function createTemplate() {
   return (
-    `<ul class="trip-events__list">
-    </ul>`
-  );
-}
+    `<div class="trip-main__trip-controls  trip-controls">
+            <div class="trip-controls__filters">
+            </div>
+     </div>`
+  );}
 
-export default class TripEventsListView {
+export default class TripControlsFiltersView {
   getTemplate() {
     return createTemplate();
   }
