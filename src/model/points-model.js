@@ -1,21 +1,21 @@
 import { getRandomPoint, tripDestinations, offersByType } from '../mock/mock.js';
 
-const WAYPOINTS_COUNT = 10;
+const WAYPOINTS_COUNT = 3;
 
 export default class PointsModel {
-  points = Array.from({ length: WAYPOINTS_COUNT }, getRandomPoint);
-  tripDestinations = tripDestinations;
-  offersByType = offersByType;
+  #points = Array.from({ length: WAYPOINTS_COUNT }, getRandomPoint);
+  #tripDestinations = tripDestinations;
+  #offersByType = offersByType;
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
-  getTripDestinations() {
-    return this.tripDestinations;
+  get tripDestinations() {
+    return this.#tripDestinations;
   }
 
-  getOffersByType() {
-    return this.offersByType;
+  get offersByType() {
+    return this.#offersByType;
   }
 }
