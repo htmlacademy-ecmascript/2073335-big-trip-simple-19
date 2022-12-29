@@ -56,7 +56,7 @@ templatePictures?.map((photo = destinationInfo) => (
         </label>
       </div>`).join('');
 
-  const destinationsOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}" ></option>`).join('');
+  const destinationsOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
 
   return (
@@ -80,11 +80,13 @@ templatePictures?.map((photo = destinationInfo) => (
             <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
             </label>
-      
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name}" list="destination-list-1">
+
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name === undefined ? '' : destinationInfo?.name}" list="destination-list-1">
+
             <datalist id="destination-list-1">
               ${destinationsOptionValueTemplate}
-            </datalist>
+              </datalist>
+            
           </div>
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
