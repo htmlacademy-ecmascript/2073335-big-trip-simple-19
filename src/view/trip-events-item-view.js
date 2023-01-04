@@ -56,25 +56,29 @@ function createTemplate(point, tripDestinations, allOffers) {
 }
 
 export default class TripEventsItemView {
+  #element = null;
+  #point = null;
+  #tripDestinations = null;
+  #allOffers = null;
   constructor({ point, tripDestinations, allOffers }) {
-    this.point = point;
-    this.tripDestinations = tripDestinations;
-    this.allOffers = allOffers;
+    this.#point = point;
+    this.#tripDestinations = tripDestinations;
+    this.#allOffers = allOffers;
   }
 
-  getTemplate() {
-    return createTemplate(this.point, this.tripDestinations, this.allOffers);
+  get template() {
+    return createTemplate(this.#point, this.#tripDestinations, this.#allOffers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

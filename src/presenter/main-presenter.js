@@ -6,19 +6,21 @@ import TripMainView from '../view/trip-main-view.js';
 
 
 export default class MainPresenter {
-  tripMainView = new TripMainView();
-  TripControlsFiltersView = new TripControlsFiltersView();
+  #container = null;
+
+  #tripMainView = new TripMainView();
+  #tripControlsFiltersView = new TripControlsFiltersView();
 
 
   constructor ({container}) {
-    this.container = container;
+    this.#container = container;
   }
 
   init() {
 
-    render(new FilterView(), this.TripControlsFiltersView.getElement());
-    render(this.TripControlsFiltersView, this.tripMainView.getElement());
-    render(new NewEventButtonView(), this.tripMainView.getElement());
-    render(this.tripMainView, this.container);
+    render(new FilterView(), this.#tripControlsFiltersView.element);
+    render(this.#tripControlsFiltersView, this.#tripMainView.element);
+    render(new NewEventButtonView(), this.#tripMainView.element);
+    render(this.#tripMainView, this.#container);
   }
 }
