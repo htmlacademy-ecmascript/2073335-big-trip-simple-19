@@ -8,7 +8,7 @@ function createTemplate() {
   );
 }
 
-export default class TripEventsView{
+export default class TripEventsView {
   #element = null;
 
   get template() {

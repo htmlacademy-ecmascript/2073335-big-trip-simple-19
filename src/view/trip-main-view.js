@@ -13,7 +13,7 @@ function createTemplate() {
   );
 }
 
-export default class TripMainView{
+export default class TripMainView {
   #element = null;
 
   get template() {

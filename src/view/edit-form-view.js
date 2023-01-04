@@ -12,11 +12,11 @@ function createEmptyPoint() {
   };
 }
 
-function isNewMode() {
+function getButtonCancelTemplate() {
   return '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
 
-function isEditMode() {
+function getButtonDeleteTemplate() {
   return `<button class="event__reset-btn" type="reset">Delete</button>
   <button class="event__rollup-btn" type="button">
 <span class="visually-hidden">Open event</span>
@@ -32,12 +32,8 @@ function createTemplate(point, tripDestinations, allOffers) {
   const templatePictures = destinationInfo?.pictures;
 
   const pictureTemplate =
-templatePictures?.map((photo = destinationInfo) => (
-  `<div class="event__photos-container">
-            <div class="event__photos-tape">
-              <img class="event__photo" src="${photo.src}" alt="${photo.description}">
-            </div>
-          </div>`)).join('');
+templatePictures?.map((photo) =>
+  `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join('');
 
   const tripTypeTemplate = allOffers.map((item) =>
     `<div class="event__type-item">
@@ -81,7 +77,7 @@ templatePictures?.map((photo = destinationInfo) => (
             ${type}
             </label>
 
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name === undefined ? '' : destinationInfo?.name}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name ?? ''}" list="destination-list-1">
 
             <datalist id="destination-list-1">
               ${destinationsOptionValueTemplate}
@@ -103,7 +99,7 @@ templatePictures?.map((photo = destinationInfo) => (
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          ${Object.hasOwn(point, 'id') ? isEditMode() : isNewMode()}
+          ${Object.hasOwn(point, 'id') ? getButtonDeleteTemplate() : getButtonCancelTemplate()}
             <span class="visually-hidden">Open event</span>
           </button>
         </header>
@@ -125,7 +121,11 @@ templatePictures?.map((photo = destinationInfo) => (
       `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${destinationInfo?.description }</p>
+            <div class="event__photos-container">
+            <div class="event__photos-tape">
             ${pictureTemplate}
+            </div>
+          </div>
           </div>
           </section>`
       : ''

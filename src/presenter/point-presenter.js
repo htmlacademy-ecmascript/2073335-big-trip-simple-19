@@ -1,11 +1,11 @@
 import EditFormView from '../view/edit-form-view.js';
 import {render} from '../render.js';
-import TripEventsItemView from '../view/trip-events-item-view.js';
+import TripEventItemView from '../view/trip-events-item-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import SortView from '../view/sort-view.js';
 import TripEventsView from '../view/trip-events-view.js';
 
-export default class BoardPresenter {
+export default class PointPresenter {
   #container = null;
   #pointsModel = null;
 
@@ -27,8 +27,8 @@ export default class BoardPresenter {
     this.#pointsDestinations = [...this.#pointsModel.tripDestinations];
     this.#pointsOffersByTypes = [...this.#pointsModel.offersByType];
 
-    for (let i = 0; i < this.#points.length; i++) {
-      this.#renderItem(this.#points[i], this.#pointsDestinations, this.#pointsOffersByTypes);
+    for (const points of this.#points) {
+      this.#renderPoint(points, this.#pointsDestinations, this.#pointsOffersByTypes);
     }
 
     render(new SortView(), this.#tripEventsView.element);
@@ -36,45 +36,47 @@ export default class BoardPresenter {
     render(this.#tripEventsView, this.#container);
   }
 
-  #renderItem(point) {
-    const tripEventsItemView = new TripEventsItemView({point, tripDestinations: this.#pointsDestinations, allOffers: this.#pointsOffersByTypes});
-    const editFormView = new EditFormView({point, tripDestinations: this.#pointsDestinations, allOffers: this.#pointsOffersByTypes});
+  #renderPoint(point) {
+    const pointCardView = new TripEventItemView({point, tripDestinations: this.#pointsDestinations, allOffers: this.#pointsOffersByTypes});
+    const pointFormView = new EditFormView({point, tripDestinations: this.#pointsDestinations, allOffers: this.#pointsOffersByTypes});
 
     const replaceCardToForm = () => {
-      this.#tripEventsListView.element.replaceChild(editFormView.element, tripEventsItemView.element);
+      this.#tripEventsListView.element.replaceChild(pointFormView.element, pointCardView.element);
     };
 
     const replaceFormToCard = () => {
-      this.#tripEventsListView.element.replaceChild(tripEventsItemView.element, editFormView.element);
+      this.#tripEventsListView.element.replaceChild(pointCardView.element, pointFormView.element);
     };
 
     const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
+      if (evt.key.startsWith('Esc') || pointFormView.element.querySelector('.event__rollup-btn') ) {
         evt.preventDefault();
         replaceFormToCard();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
 
-    tripEventsItemView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointCardView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       replaceCardToForm();
       document.addEventListener('keydown', escKeyDownHandler);
     });
-    if (editFormView.element.querySelector('.event__rollup-btn')) {
-      editFormView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    if (pointFormView.element.querySelector('.event__rollup-btn')) {
+
+      pointFormView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
         replaceFormToCard();
         document.addEventListener('keydown', escKeyDownHandler);
 
       });
     }
-    editFormView.element.querySelector('.event__save-btn').addEventListener('submit', (evt) => {
+
+    pointFormView.element.querySelector('.event__save-btn').addEventListener('submit', (evt) => {
       evt.preventDefault();
       replaceFormToCard();
       document.removeEventListener('keydown', escKeyDownHandler);
     });
 
 
-    render(tripEventsItemView, this.#tripEventsListView.element);
+    render(pointCardView, this.#tripEventsListView.element);
   }
 }
 
