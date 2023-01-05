@@ -12,11 +12,11 @@ function createEmptyPoint() {
   };
 }
 
-function getButtonCancelTemplate() {
+function createButtonCancelTemplate() {
   return '<button class="event__reset-btn" type="reset">Cancel</button>';
 }
 
-function getButtonDeleteTemplate() {
+function createButtonDeleteTemplate() {
   return `<button class="event__reset-btn" type="reset">Delete</button>
   <button class="event__rollup-btn" type="button">
 <span class="visually-hidden">Open event</span>
@@ -99,7 +99,7 @@ templatePictures?.map((photo) =>
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          ${Object.hasOwn(point, 'id') ? getButtonDeleteTemplate() : getButtonCancelTemplate()}
+          ${Object.hasOwn(point, 'id') ? createButtonDeleteTemplate() : createButtonCancelTemplate()}
             <span class="visually-hidden">Open event</span>
           </button>
         </header>
