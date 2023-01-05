@@ -4,6 +4,9 @@ import TripEventItemView from '../view/trip-events-item-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import SortView from '../view/sort-view.js';
 import TripEventsView from '../view/trip-events-view.js';
+import EmptyListView from '../view/empty-list-view.js';
+
+const POINT_COUNT = 0;
 
 export default class PointPresenter {
   #container = null;
@@ -27,8 +30,13 @@ export default class PointPresenter {
     this.#pointsDestinations = [...this.#pointsModel.tripDestinations];
     this.#pointsOffersByTypes = [...this.#pointsModel.offersByType];
 
-    for (const points of this.#points) {
-      this.#renderPoint(points, this.#pointsDestinations, this.#pointsOffersByTypes);
+    if (this.#points.length === POINT_COUNT) {
+      render(new EmptyListView(), this.#container);
+      return;
+    }
+
+    for (const point of this.#points) {
+      this.#renderPoint(point, this.#pointsDestinations, this.#pointsOffersByTypes);
     }
 
     render(new SortView(), this.#tripEventsView.element);
@@ -43,13 +51,13 @@ export default class PointPresenter {
     const replaceCardToForm = () => {
       this.#tripEventsListView.element.replaceChild(pointFormView.element, pointCardView.element);
     };
-
+    //рейплейс форм ту кард только если форма открыта
     const replaceFormToCard = () => {
       this.#tripEventsListView.element.replaceChild(pointCardView.element, pointFormView.element);
     };
 
     const escKeyDownHandler = (evt) => {
-      if (evt.key.startsWith('Esc') || pointFormView.element.querySelector('.event__rollup-btn') ) {
+      if (evt.key.startsWith('Esc')) {
         evt.preventDefault();
         replaceFormToCard();
         document.removeEventListener('keydown', escKeyDownHandler);
@@ -60,11 +68,12 @@ export default class PointPresenter {
       replaceCardToForm();
       document.addEventListener('keydown', escKeyDownHandler);
     });
+
     if (pointFormView.element.querySelector('.event__rollup-btn')) {
 
       pointFormView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
         replaceFormToCard();
-        document.addEventListener('keydown', escKeyDownHandler);
+        document.removeEventListener('keydown', escKeyDownHandler);
 
       });
     }
@@ -75,8 +84,8 @@ export default class PointPresenter {
       document.removeEventListener('keydown', escKeyDownHandler);
     });
 
-
     render(pointCardView, this.#tripEventsListView.element);
   }
 }
+
 
