@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate } from '../util.js';
 
 function createTemplate(point, tripDestinations, allOffers) {
@@ -55,30 +55,30 @@ function createTemplate(point, tripDestinations, allOffers) {
   );
 }
 
-export default class TripEventsItemView {
-  #element = null;
+export default class TripEventsItemView extends AbstractView {
   #point = null;
   #tripDestinations = null;
   #allOffers = null;
-  constructor({ point, tripDestinations, allOffers }) {
+  #handleEventRollupClick = null;
+
+  constructor({ point, tripDestinations, allOffers, onEventRollupClick}) {
+    super();
     this.#point = point;
     this.#tripDestinations = tripDestinations;
     this.#allOffers = allOffers;
+    this.#handleEventRollupClick = onEventRollupClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#eventRollupClickHandler);
+
   }
 
   get template() {
     return createTemplate(this.#point, this.#tripDestinations, this.#allOffers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #eventRollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEventRollupClick();
+  };
 }

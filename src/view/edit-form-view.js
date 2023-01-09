@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, capitalize } from '../util.js';
 
 function createEmptyPoint() {
@@ -136,31 +136,43 @@ templatePictures?.map((photo) =>
   );
 }
 
-export default class EditFormView {
-  #element = null;
+export default class EditFormView extends AbstractView {
   #point = null;
   #tripDestinations = null;
   #allOffers = null;
+  #handleFormSubmit = null;
+  #handleRollupClick = null;
 
-  constructor({ point = createEmptyPoint(), tripDestinations, allOffers}) {
+  constructor({ point = createEmptyPoint(), tripDestinations, allOffers, onFormSubmit, onRollupClick}) {
+    super();
     this.#point = point;
     this.#tripDestinations = tripDestinations;
     this.#allOffers = allOffers;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleRollupClick = onRollupClick;
+
+    this.element.querySelector('.event__save-btn')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    if (this.element.querySelector('.event__rollup-btn'))
+    {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#rollupEventClickHandler);
+    }
   }
 
   get template() {
     return createTemplate(this.#point, this.#tripDestinations, this.#allOffers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
+  #rollupEventClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
 
-  removeElement() {
-    this.#element = null;
-  }
+  };
 }
