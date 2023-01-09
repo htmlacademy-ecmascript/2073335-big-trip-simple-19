@@ -59,18 +59,17 @@ export default class TripEventsItemView extends AbstractView {
   #point = null;
   #tripDestinations = null;
   #allOffers = null;
-  #handleEditClick = null;
+  #handleEventRollupClick = null;
 
-  constructor({ point, tripDestinations, allOffers, onEditClick}) {
+  constructor({ point, tripDestinations, allOffers, onEventRollupClick}) {
     super();
     this.#point = point;
     this.#tripDestinations = tripDestinations;
     this.#allOffers = allOffers;
-
-    this.#handleEditClick = onEditClick;
+    this.#handleEventRollupClick = onEventRollupClick;
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editClickHandler);
+      .addEventListener('click', this.#eventRollupClickHandler);
 
   }
 
@@ -78,8 +77,8 @@ export default class TripEventsItemView extends AbstractView {
     return createTemplate(this.#point, this.#tripDestinations, this.#allOffers);
   }
 
-  #editClickHandler = (evt) => {
+  #eventRollupClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick();
+    this.#handleEventRollupClick();
   };
 }

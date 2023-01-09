@@ -154,9 +154,11 @@ export default class EditFormView extends AbstractView {
     this.element.querySelector('.event__save-btn')
       .addEventListener('submit', this.#formSubmitHandler);
 
-    this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#handleRollupClick);
-
+    if (this.element.querySelector('.event__rollup-btn'))
+    {
+      this.element.querySelector('.event__rollup-btn')
+        .addEventListener('click', this.#rollupEventClickHandler);
+    }
   }
 
   get template() {
@@ -168,4 +170,9 @@ export default class EditFormView extends AbstractView {
     this.#handleFormSubmit();
   };
 
+  #rollupEventClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+
+  };
 }

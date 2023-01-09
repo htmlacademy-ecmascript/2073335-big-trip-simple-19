@@ -57,7 +57,7 @@ export default class PointPresenter {
       tripDestinations: this.#pointsDestinations,
       allOffers: this.#pointsOffersByTypes,
 
-      onEditClick: () => {
+      onEventRollupClick: () => {
         replaceCardToForm.call(this);
         document.addEventListener('keydown', escKeyDownHandler);
       }
