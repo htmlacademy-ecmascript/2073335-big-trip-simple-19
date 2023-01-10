@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate, capitalize } from '../util.js';
+import { humanizeDate, capitalize } from '../utils/common.js';
 
 function createEmptyPoint() {
   return {
@@ -154,11 +154,9 @@ export default class EditFormView extends AbstractView {
     this.element.querySelector('.event__save-btn')
       .addEventListener('submit', this.#formSubmitHandler);
 
-    if (this.element.querySelector('.event__rollup-btn'))
-    {
-      this.element.querySelector('.event__rollup-btn')
-        .addEventListener('click', this.#rollupEventClickHandler);
-    }
+
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupEventClickHandler);
+
   }
 
   get template() {

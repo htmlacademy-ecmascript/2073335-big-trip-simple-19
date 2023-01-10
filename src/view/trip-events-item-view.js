@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate } from '../util.js';
+import { humanizeDate } from '../utils/common.js';
 
 function createTemplate(point, tripDestinations, allOffers) {
   const { basePrice, destination, type, offers, dateFrom, dateTo } = point;
