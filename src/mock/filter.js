@@ -1,6 +1,6 @@
 import {filter} from '../utils/filter.js';
 
-function generateFilter(points) {
+function generateFilters(points) {
   return Object.entries(filter).map(
     ([filterName, filterPoints]) => ({
       name: filterName,
@@ -9,4 +9,4 @@ function generateFilter(points) {
   );
 }
 
-export {generateFilter};
+export {generateFilters};

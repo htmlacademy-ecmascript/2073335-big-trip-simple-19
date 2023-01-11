@@ -1,95 +1,97 @@
+import { Mode } from '../const.js';
+import { render, replace, remove } from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
-import {render, replace} from '../framework/render.js';
 import TripEventItemView from '../view/trip-events-item-view.js';
-import TripEventsListView from '../view/trip-events-list-view.js';
-import SortView from '../view/sort-view.js';
-import TripEventsView from '../view/trip-events-view.js';
-import EmptyListView from '../view/empty-list-view.js';
 
 export default class PointPresenter {
-  #container = null;
-  #pointsModel = null;
+  #pointsListContainer = null;
+  #pointCardView = null;
+  #pointEditView = null;
+  #handlePointChange = null;
+  #point = null;
+  #mode = Mode.DEFAULT;
+  #handleModeChange = null;
 
-  #tripEventsView = new TripEventsView();
-  #tripEventsListView = new TripEventsListView();
-
-  #points = [];
-  #pointsDestinations = [];
-  #pointsOffersByTypes = [];
-
-  constructor({container, pointsModel}) {
-    this.#container = container;
-    this.#pointsModel = pointsModel;
-
+  constructor({pointsListContainer, onDataChange, onModeChange}) {
+    this.#pointsListContainer = pointsListContainer;
+    this.#handlePointChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
-  init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#pointsDestinations = [...this.#pointsModel.tripDestinations];
-    this.#pointsOffersByTypes = [...this.#pointsModel.offersByType];
+  #escKeyDownHandler = (evt) => {
+    if (evt.key.startsWith('Esc')) {
+      evt.preventDefault();
+      this.#closeForm();
+    }
+  };
 
-    if (this.#points.length === 0) {
-      render(new EmptyListView(), this.#container);
+  init(point) {
+    this.#point = point;
+
+    const prevCardComponent = this.#pointCardView;
+    const prevCardEditComponent = this.#pointEditView;
+
+    this.#pointCardView = new TripEventItemView({... point,
+      onEventRollupClick: this.#openForm
+    });
+
+    this.#pointEditView = new EditFormView({... point,
+      onFormSubmit: this.#submitForm,
+      onRollupClick: this.#closeForm
+    });
+
+    if (prevCardComponent === null || prevCardEditComponent === null) {
+      render(this.#pointCardView, this.#pointsListContainer);
       return;
     }
 
-    for (const point of this.#points) {
-      this.#renderPoint(point, this.#pointsDestinations, this.#pointsOffersByTypes);
+    if (this.#mode === Mode.DEFAULT) {
+      replace(this.#pointCardView, prevCardComponent);
     }
 
-    render(new SortView(), this.#tripEventsView.element);
-    render(this.#tripEventsListView, this.#tripEventsView.element);
-    render(this.#tripEventsView, this.#container);
+    if (this.#mode === Mode.EDITING) {
+      replace(this.#pointEditView, prevCardEditComponent);
+    }
+
+    remove(prevCardComponent);
+    remove(prevCardEditComponent);
   }
 
-  #renderPoint(point) {
-
-    const escKeyDownHandler = (evt) => {
-      if (evt.key.startsWith('Esc')) {
-        evt.preventDefault();
-        replaceFormToCard.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointCardView = new TripEventItemView({
-      point,
-      tripDestinations: this.#pointsDestinations,
-      allOffers: this.#pointsOffersByTypes,
-
-      onEventRollupClick: () => {
-        replaceCardToForm.call(this);
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    const pointFormView = new EditFormView({
-      point,
-      tripDestinations: this.#pointsDestinations,
-      allOffers: this.#pointsOffersByTypes,
-
-      onFormSubmit: () => {
-        replaceFormToCard.call(this);
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-
-      onRollupClick: () => {
-        replaceFormToCard.call(this);
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
-
-    });
-
-    function replaceCardToForm() {
-      replace(pointFormView, pointCardView);
-    }
-
-    function replaceFormToCard() {
-      replace(pointCardView, pointFormView);
-    }
-
-    render(pointCardView, this.#tripEventsListView.element);
+  destroy() {
+    remove(this.#pointCardView);
+    remove(this.#pointEditView);
   }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToCard();
+    }
+  }
+
+  #replaceCardToForm() {
+    replace(this.#pointEditView, this.#pointCardView);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
+  }
+
+  #replaceFormToCard() {
+    replace(this.#pointCardView, this.#pointEditView);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
+  }
+
+  #closeForm = () => {
+    this.#replaceFormToCard();
+  };
+
+  #submitForm = (point) => {
+    this.#handlePointChange(point);
+    this.#replaceFormToCard();
+  };
+
+  #openForm = () => {
+    this.#handleModeChange();
+    this.#replaceCardToForm();
+  };
 }
-
-
