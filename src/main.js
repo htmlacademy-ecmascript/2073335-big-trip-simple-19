@@ -1,7 +1,7 @@
-import PointPresenter from './presenter/point-presenter.js';
+import PointListPresenter from './presenter/point-list-presenter.js';
 import PointsModel from './model/points-model.js';
 import MainPresenter from './presenter/main-presenter.js';
-import { generateFilter } from './mock/filter.js';
+import { generateFilters } from './mock/filter.js';
 
 
 const headerElement = document.querySelector('.page-header__container');
@@ -10,10 +10,10 @@ const pageBodyContainerElement = pageBodyElement.querySelector('.page-body__cont
 
 
 const pointsModel = new PointsModel();
-const filters = generateFilter(pointsModel.points);
+const filters = generateFilters(pointsModel.points);
 
-const pointPresenter = new PointPresenter({container: pageBodyContainerElement, pointsModel});
-const mainPresenter = new MainPresenter({container: headerElement, filters: filters});
+const pointListPresenter = new PointListPresenter({container: pageBodyContainerElement, pointsModel});
+const mainPresenter = new MainPresenter({container: headerElement, filters});
 
 mainPresenter.init();
-pointPresenter.init();
+pointListPresenter.init();

@@ -1,3 +1,5 @@
+import {nanoid} from 'nanoid';
+
 function getRandomArrayItem (items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -259,6 +261,11 @@ const MOCK_POINTS = [
   }
 ];
 
-const getRandomPoint = () => getRandomArrayItem(MOCK_POINTS);
-
+function getRandomPoint()
+{
+  return {
+    id: nanoid(),
+    ...getRandomArrayItem(MOCK_POINTS)
+  };
+}
 export { tripDestinations, offersByType, getRandomPoint};

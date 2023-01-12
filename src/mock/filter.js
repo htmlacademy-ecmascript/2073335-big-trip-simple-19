@@ -1,7 +1,7 @@
-import {filter} from '../utils/filter.js';
+import {filterTypeToFilter} from '../utils/filter.js';
 
-function generateFilter(points) {
-  return Object.entries(filter).map(
+function generateFilters(points) {
+  return Object.entries(filterTypeToFilter).map(
     ([filterName, filterPoints]) => ({
       name: filterName,
       isEmpty: filterPoints(points).length === 0,
@@ -9,4 +9,4 @@ function generateFilter(points) {
   );
 }
 
-export {generateFilter};
+export {generateFilters};

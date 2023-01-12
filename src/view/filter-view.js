@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createFilterItemTemplate(filter, isChecked) {
+function createFilterItemTemplate(filter, isChecked = false) {
   const { name, isEmpty } = filter;
 
   return (
@@ -28,7 +28,7 @@ function createTemplate(filterItems) {
 }
 
 export default class FilterView extends AbstractView {
-  #filters = null;
+  #filters = [];
 
   constructor(filters) {
     super();
