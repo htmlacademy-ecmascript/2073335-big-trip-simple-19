@@ -9,14 +9,16 @@ import { updatePoint } from '../utils/common.js';
 export default class PointListPresenter {
   #container = null;
   #pointsModel = null;
+
   #tripEventsView = new TripEventsView();
   #tripEventsListView = new TripEventsListView();
   #sortView = new SortView();
   #emptyListView = new EmptyListView();
 
   #points = [];
-  #pointsDestinations = [];
-  #pointsOffersByTypes = [];
+  #destinations = [];
+  #allOffers = [];
+
   #pointPresenters = new Map ();
 
   constructor({container, pointsModel}) {
@@ -27,21 +29,11 @@ export default class PointListPresenter {
 
   init() {
     this.#points = [...this.#pointsModel.points];
-    this.#pointsDestinations = [...this.#pointsModel.tripDestinations];
-    this.#pointsOffersByTypes = [...this.#pointsModel.offersByType];
+    this.#destinations = [...this.#pointsModel.tripDestinations];
+    this.#allOffers = [...this.#pointsModel.offersByType];
 
     this.#renderTripEventsView();
   }
-
-  #handleModeChange = () => {
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
-  #handlePointChange = (updatedPoint) => {
-    this.#points = updatePoint(this.#points, updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
-  };
-
 
   #renderSort() {
     render(this.#sortView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
@@ -52,32 +44,35 @@ export default class PointListPresenter {
 
     const pointData = {
       point,
-      tripDestinations: this.#pointsDestinations,
-      allOffers: this.#pointsOffersByTypes,
+      tripDestinations: this.#destinations,
+      allOffers: this.#allOffers,
     };
 
     const pointPresenter = new PointPresenter({
-      pointsListContainer: this.#tripEventsListView.element,
+      container: this.#tripEventsListView.element,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
     pointPresenter.init(pointData);
-    this.#pointPresenters.set(pointData.id, pointPresenter);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderNoPoint () {
     render(this.#emptyListView, this.#container.element, RenderPosition.AFTERBEGIN);
   }
 
-  #clearPointsList() {
+  #clear() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
   }
 
-  #renderTripList () {
+  #renderPointsInList () {
     for (const point of this.#points) {
-      this.#renderPoint(point, this.#pointsDestinations, this.#pointsOffersByTypes);
+      this.#renderPoint(point, this.#destinations, this.#allOffers);
     }
+  }
+
+  #renderList () {
     render(this.#tripEventsListView, this.#tripEventsView.element);
   }
 
@@ -88,10 +83,21 @@ export default class PointListPresenter {
       this.#renderNoPoint();
       return;
     }
+
     this.#renderSort();
-    this.#renderTripList();
+    this.#renderPointsInList();
+    this.#renderList();
 
   }
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updatePoint(this.#points, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 
 
 }
