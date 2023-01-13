@@ -86,8 +86,6 @@ export default class PointListPresenter {
   }
 
   #renderTripEventsView () {
-    render(this.#tripEventsView, this.#container);
-
     if (this.#points.length === 0) {
       this.#renderNoPoint();
       return;
@@ -96,7 +94,7 @@ export default class PointListPresenter {
     this.#renderSort();
     this.#renderPointsInList();
     this.#renderList();
-
+    render(this.#tripEventsView, this.#container);
   }
 
   #sortPoints(sortType) {
@@ -108,7 +106,6 @@ export default class PointListPresenter {
         this.#points.sort(sortByTime);
         break;
       default:
-
         this.#points = [...this.#sourcedPoints];
 
     }
@@ -133,7 +130,7 @@ export default class PointListPresenter {
 
     this.#sortPoints(sortType);
     this.#clear();
-    this.#renderList();
+    this.#renderPointsInList();
   };
 
 }
