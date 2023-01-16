@@ -4,8 +4,10 @@ import SortView from '../view/sort-view.js';
 import TripEventsView from '../view/trip-events-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import PointPresenter from './point-presenter.js';
-import { sortByPrice, sortByTime, updatePoint } from '../utils/common.js';
+import { updatePoint } from '../utils/common.js';
 import { SortType } from '../const.js';
+import { sortByPrice, sortByDay, sortByTime } from '../utils/sort.js';
+
 
 export default class PointListPresenter {
   #container = null;
@@ -45,6 +47,7 @@ export default class PointListPresenter {
     this.#sortView = new SortView({
       onSortTypeChange: this.#handleSortTypeChange
     });
+    this.#sortPoints(this.#currentSortType);
     render(this.#sortView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -75,7 +78,7 @@ export default class PointListPresenter {
     this.#pointPresenters.clear();
   }
 
-  #renderPointsInList () {
+  #renderPoints () {
     for (const point of this.#points) {
       this.#renderPoint(point, this.#destinations, this.#allOffers);
     }
@@ -92,7 +95,7 @@ export default class PointListPresenter {
     }
 
     this.#renderSort();
-    this.#renderPointsInList();
+    this.#renderPoints();
     this.#renderList();
     render(this.#tripEventsView, this.#container);
   }
@@ -106,7 +109,9 @@ export default class PointListPresenter {
         this.#points.sort(sortByTime);
         break;
       default:
-        this.#points = [...this.#sourcedPoints];
+        this.#points.sort(sortByDay);
+        break;
+
 
     }
     this.#currentSortType = sortType;
@@ -124,13 +129,9 @@ export default class PointListPresenter {
   };
 
   #handleSortTypeChange = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-
     this.#sortPoints(sortType);
     this.#clear();
-    this.#renderPointsInList();
+    this.#renderPoints();
   };
 
 }
