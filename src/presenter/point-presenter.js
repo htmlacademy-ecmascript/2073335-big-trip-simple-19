@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import TripEventItemView from '../view/trip-events-item-view.js';
-//уточнить
+
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
@@ -27,8 +27,8 @@ export default class PointPresenter {
   init(point) {
     this.#point = point;
 
-    const prevCardView = this.#pointCardView;
-    const prevCardEditView = this.#pointFormView;
+    const prevPointCardView = this.#pointCardView;
+    const prevPointFormView = this.#pointFormView;
 
     this.#pointCardView = new TripEventItemView({... point,
       onEventRollupClick: this.#handleOpenForm
@@ -39,23 +39,23 @@ export default class PointPresenter {
       onRollupClick: this.#handleCloseForm
     });
 
-    if (prevCardView === null || prevCardEditView === null) {
+    if (prevPointCardView === null || prevPointFormView === null) {
       render(this.#pointCardView, this.#container);
       return;
     }
 
     if (this.#mode === Mode.DEFAULT) {
-      replace(this.#pointCardView, prevCardView);
-      this.#mode = Mode.EDITING; }
+      replace(this.#pointCardView, prevPointCardView);
+    }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointFormView, prevCardEditView);
-      this.#mode = Mode.DEFAULT;
+      replace(this.#pointFormView, prevPointFormView);
+
 
     }
 
-    remove(prevCardView);
-    remove(prevCardEditView);
+    remove(prevPointCardView);
+    remove(prevPointFormView);
   }
 
   destroy() {
