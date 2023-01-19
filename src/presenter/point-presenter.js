@@ -12,31 +12,37 @@ export default class PointPresenter {
   #pointCardView = null;
   #pointFormView = null;
 
+  #tripDestinations = null;
   #point = null;
   #handleModeChange = null;
   #handlePointChange = null;
 
   #mode = Mode.DEFAULT;
 
-  constructor({container, onDataChange, onModeChange}) {
+  constructor({container, onDataChange, onModeChange, tripDestinations}) {
     this.#container = container;
     this.#handlePointChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#tripDestinations = tripDestinations;
   }
 
-  init(point) {
+  init(point, destinations) {
     this.#point = point;
+    this.#tripDestinations = destinations;
+
 
     const prevPointCardView = this.#pointCardView;
     const prevPointFormView = this.#pointFormView;
 
     this.#pointCardView = new TripEventItemView({... point,
-      onEventRollupClick: this.#handleOpenForm
+      onEventRollupClick: this.#handleOpenForm,
+      destinations: this.#tripDestinations
     });
 
     this.#pointFormView = new EditFormView({... point,
       onFormSubmit: this.#handleSubmitForm,
-      onRollupClick: this.#handleCloseForm
+      onRollupClick: this.#handleCloseForm,
+      destinations: this.#tripDestinations
     });
 
     if (prevPointCardView === null || prevPointFormView === null) {

@@ -12,10 +12,12 @@ import { sortByPrice, sortByDay, sortByTime } from '../utils/sort.js';
 export default class PointListPresenter {
   #container = null;
   #pointsModel = null;
+  #destinationModel = null;
+  #offersModel = null;
+  #sortView = null;
 
   #tripEventsView = new TripEventsView();
   #tripEventsListView = new TripEventsListView();
-  #sortView = null;
   #emptyListView = new EmptyListView();
 
   #points = [];
@@ -26,11 +28,13 @@ export default class PointListPresenter {
   #currentSortType = SortType.DAY;
 
 
-  #pointPresenters = new Map ();
-
-  constructor({container, pointsModel}) {
+  #pointPresenters = new Map();
+  //добавлен офферсмодел в конструктор, пусть пока полежит
+  constructor({container, pointsModel, destinationModel, offersModel}) {
     this.#container = container;
     this.#pointsModel = pointsModel;
+    this.#destinationModel = destinationModel;
+    this.#offersModel = offersModel;
 
   }
 
@@ -47,7 +51,6 @@ export default class PointListPresenter {
     this.#sortView = new SortView({
       onSortTypeChange: this.#handleSortTypeChange
     });
-    this.#sortPoints(this.#currentSortType);
     render(this.#sortView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -63,9 +66,10 @@ export default class PointListPresenter {
     const pointPresenter = new PointPresenter({
       container: this.#tripEventsListView.element,
       onDataChange: this.#handlePointChange,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
+      tripDestinations: this.#destinationModel
     });
-    pointPresenter.init(pointData);
+    pointPresenter.init(pointData, this.#destinationModel);
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -97,6 +101,7 @@ export default class PointListPresenter {
     this.#renderSort();
     this.#renderPoints();
     this.#renderList();
+    this.#sortPoints(this.#currentSortType);
     render(this.#tripEventsView, this.#container);
   }
 
@@ -133,5 +138,4 @@ export default class PointListPresenter {
     this.#clear();
     this.#renderPoints();
   };
-
 }

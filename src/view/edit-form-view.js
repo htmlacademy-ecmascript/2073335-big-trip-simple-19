@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDate, capitalize } from '../utils/common.js';
 
 function createEmptyPoint() {
@@ -28,7 +28,6 @@ function createTemplate(point, tripDestinations, allOffers) {
 
   const destinationInfo = tripDestinations.find((item) => item.id === destination);
   const offerByType = allOffers.find((offer) => offer.type === type);
-  const typeOffers = offerByType.offers;
   const templatePictures = destinationInfo?.pictures;
 
   const pictureTemplate =
@@ -42,9 +41,9 @@ templatePictures?.map((photo) =>
     </div>`).join('');
 
   const offersTemplate =
-    typeOffers.map((offer) =>
+    offerByType.offers.map((offer) =>
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${offers.includes(offer.id) ? 'checked' : ''}>
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${offers.includes(offer.id) ? 'checked' : ''} data-offer-id="${offer.id}">
         <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
@@ -136,7 +135,7 @@ templatePictures?.map((photo) =>
   );
 }
 
-export default class EditFormView extends AbstractView {
+export default class EditFormView extends AbstractStatefulView {
   #point = null;
   #tripDestinations = null;
   #allOffers = null;
@@ -145,32 +144,86 @@ export default class EditFormView extends AbstractView {
 
   constructor({ point = createEmptyPoint(), tripDestinations, allOffers, onFormSubmit, onRollupClick}) {
     super();
-    this.#point = point;
+    this._setState(EditFormView.parsePointToState(point));
     this.#tripDestinations = tripDestinations;
     this.#allOffers = allOffers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
 
-    this.element.querySelector('form')
-      .addEventListener('submit', this.#formSubmitHandler);
 
-
-    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupEventClickHandler);
-
+    this._restoreHandlers();
   }
 
   get template() {
-    return createTemplate(this.#point, this.#tripDestinations, this.#allOffers);
+    return createTemplate(this._state, this.#tripDestinations, this.#allOffers);
   }
+
+  _restoreHandlers() {
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupEventClickHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('input', this.#offerChangeHandler);
+
+  }
+
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
   };
 
   #rollupEventClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleRollupClick();
 
+  };
+
+  #pointTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.tagName === 'INPUT') {
+      this.updateElement({
+        type: evt.target.value,
+        offers: []
+      });
+    }
+  };
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (!evt.target.value) {
+      this.updateElement({
+        destination: ''
+      });
+      return;
+    }
+    const selectedDestination = this.#tripDestinations
+      .find((destination) => evt.target.value === destination.name);
+
+    this.updateElement({
+      destination: selectedDestination.id
+    });
+  };
+
+  #offerChangeHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.tagName === 'INPUT') {
+      const currentOfferId = Number(evt.target.dataset.offerId);
+      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+      if (currentOfferIndex === -1) {
+        this._state.offers.push(currentOfferId);
+        return;
+      }
+      this._state.offers.splice(currentOfferIndex, 1);
+    }
+  };
+
+  reset = (point) => {
+    this.updateElement(EditFormView.parsePointToState(point));
   };
 }
