@@ -75,9 +75,9 @@ templatePictures?.map((photo) =>
             <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
             </label>
-
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name ?? ''}" list="destination-list-1">
-
+            <!-- Валидация формы. Не позволяет отправить форму, если нет такого дестинейшона -->
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationInfo?.name ?? ''}" list="destination-list-1" pattern="^(${destinationInfo?.name})$" >
+          
             <datalist id="destination-list-1">
               ${destinationsOptionValueTemplate}
               </datalist>
@@ -150,7 +150,6 @@ export default class EditFormView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleRollupClick = onRollupClick;
 
-
     this._restoreHandlers();
   }
 
@@ -158,18 +157,19 @@ export default class EditFormView extends AbstractStatefulView {
     return createTemplate(this._state, this.#tripDestinations, this.#allOffers);
   }
 
+  reset(point) {
+    this.updateElement(EditFormView.parsePointToState(point));
+  }
+
   _restoreHandlers() {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupEventClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('input', this.#offerChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
 
   }
 
-  static parsePointToState = (point) => ({ ...point });
-
-  static parseStateToPoint = (state) => ({ ...state });
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -185,12 +185,12 @@ export default class EditFormView extends AbstractStatefulView {
   #pointTypeChangeHandler = (evt) => {
     evt.preventDefault();
 
-    if (evt.target.tagName === 'INPUT') {
-      this.updateElement({
-        type: evt.target.value,
-        offers: []
-      });
-    }
+
+    this.updateElement({
+      type: evt.target.value,
+      offers: []
+    });
+
   };
 
   #destinationChangeHandler = (evt) => {
@@ -198,32 +198,39 @@ export default class EditFormView extends AbstractStatefulView {
 
     if (!evt.target.value) {
       this.updateElement({
-        destination: ''
+        destination: 0,
       });
       return;
     }
+
     const selectedDestination = this.#tripDestinations
       .find((destination) => evt.target.value === destination.name);
-
-    this.updateElement({
-      destination: selectedDestination.id
-    });
+    try {
+      this.updateElement({
+        destination: selectedDestination.id
+      });}
+    catch (e) {
+      if (e instanceof TypeError) {
+        this.updateElement({
+          destination: 0,
+        });}
+    }
   };
 
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.tagName === 'INPUT') {
-      const currentOfferId = Number(evt.target.dataset.offerId);
-      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
-      if (currentOfferIndex === -1) {
-        this._state.offers.push(currentOfferId);
-        return;
-      }
-      this._state.offers.splice(currentOfferIndex, 1);
+    const currentOfferId = Number(evt.target.dataset.offerId);
+    const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+
+    if (currentOfferIndex === -1) {
+      this._setState(this._state.offers.push(currentOfferId));
+      return;
     }
+    this._setState(this._state.offers.splice(currentOfferIndex, 1));
+
   };
 
-  reset = (point) => {
-    this.updateElement(EditFormView.parsePointToState(point));
-  };
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 }

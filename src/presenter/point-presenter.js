@@ -12,23 +12,23 @@ export default class PointPresenter {
   #pointCardView = null;
   #pointFormView = null;
 
-  #tripDestinations = null;
+  #tripDestination = null;
   #point = null;
   #handleModeChange = null;
   #handlePointChange = null;
 
   #mode = Mode.DEFAULT;
 
-  constructor({container, onDataChange, onModeChange, tripDestinations}) {
+  constructor({container, onDataChange, onModeChange, tripDestination}) {
     this.#container = container;
     this.#handlePointChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#tripDestinations = tripDestinations;
+    this.#tripDestination = tripDestination;
   }
 
   init(point, destinations) {
     this.#point = point;
-    this.#tripDestinations = destinations;
+    this.#tripDestination = destinations;
 
 
     const prevPointCardView = this.#pointCardView;
@@ -36,13 +36,13 @@ export default class PointPresenter {
 
     this.#pointCardView = new TripEventItemView({... point,
       onEventRollupClick: this.#handleOpenForm,
-      destinations: this.#tripDestinations
+
     });
 
     this.#pointFormView = new EditFormView({... point,
       onFormSubmit: this.#handleSubmitForm,
       onRollupClick: this.#handleCloseForm,
-      destinations: this.#tripDestinations
+
     });
 
     if (prevPointCardView === null || prevPointFormView === null) {
@@ -71,6 +71,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();
     }
   }
@@ -89,6 +90,7 @@ export default class PointPresenter {
   }
 
   #handleCloseForm = () => {
+    this.#pointFormView.reset(this.#point);
     this.#replaceFormToCard();
   };
 
@@ -102,9 +104,10 @@ export default class PointPresenter {
   };
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key.startsWith('Esc')) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#handleCloseForm();
+      this.#pointFormView.reset(this.#point);
+      this.#replaceFormToCard();
     }
   };
 }

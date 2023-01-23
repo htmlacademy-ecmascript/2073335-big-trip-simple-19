@@ -67,7 +67,7 @@ export default class PointListPresenter {
       container: this.#tripEventsListView.element,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
-      tripDestinations: this.#destinationModel
+      tripDestination: this.#destinationModel
     });
     pointPresenter.init(pointData, this.#destinationModel);
     this.#pointPresenters.set(point.id, pointPresenter);
@@ -99,9 +99,9 @@ export default class PointListPresenter {
     }
 
     this.#renderSort();
+    this.#sortPoints(this.#currentSortType);
     this.#renderPoints();
     this.#renderList();
-    this.#sortPoints(this.#currentSortType);
     render(this.#tripEventsView, this.#container);
   }
 

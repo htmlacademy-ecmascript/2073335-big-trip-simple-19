@@ -8,5 +8,6 @@ const SortType = {
   PRICE: 'price',
   DAY: 'day',
 };
+const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-export {FilterType, SortType};
+export {FilterType, SortType, TYPES};

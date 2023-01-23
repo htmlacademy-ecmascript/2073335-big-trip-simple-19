@@ -2,9 +2,9 @@ import {tripDestinations} from '../mock/mock.js';
 
 
 export default class TripDestinationsModel {
-  #tripDestinations = tripDestinations;
+  #tripDestination = tripDestinations;
 
-  get tripDestinations() {
-    return this.#tripDestinations;
+  get tripDestination() {
+    return this.#tripDestination;
   }
 }
