@@ -11,35 +11,41 @@ export default class PointPresenter {
   #container = null;
   #pointCardView = null;
   #pointFormView = null;
-
-  #tripDestination = null;
+  #tripDestinations = null;
   #point = null;
+  #destinations = null;
+  #allOffers = null;
   #handleModeChange = null;
   #handlePointChange = null;
 
   #mode = Mode.DEFAULT;
 
-  constructor({container, onDataChange, onModeChange, tripDestination}) {
+  constructor({container, onDataChange, onModeChange}) {
     this.#container = container;
     this.#handlePointChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#tripDestination = tripDestination;
+
   }
 
-  init(point, destinations) {
+  init(point, allOffers, tripDestinations) {
     this.#point = point;
-    this.#tripDestination = destinations;
-
+    this.#allOffers = allOffers;
+    this.#tripDestinations = tripDestinations;
 
     const prevPointCardView = this.#pointCardView;
     const prevPointFormView = this.#pointFormView;
 
     this.#pointCardView = new TripEventItemView({... point,
+      ...tripDestinations,
+      ...allOffers,
       onEventRollupClick: this.#handleOpenForm,
 
     });
 
-    this.#pointFormView = new EditFormView({... point,
+    this.#pointFormView = new EditFormView({
+      ... point,
+      ...tripDestinations,
+      ...allOffers,
       onFormSubmit: this.#handleSubmitForm,
       onRollupClick: this.#handleCloseForm,
 
@@ -90,7 +96,6 @@ export default class PointPresenter {
   }
 
   #handleCloseForm = () => {
-    this.#pointFormView.reset(this.#point);
     this.#replaceFormToCard();
   };
 
@@ -104,7 +109,7 @@ export default class PointPresenter {
   };
 
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (evt.key.startsWith('Esc')) {
       evt.preventDefault();
       this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();

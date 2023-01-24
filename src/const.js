@@ -10,4 +10,6 @@ const SortType = {
 };
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-export {FilterType, SortType, TYPES};
+const CITIES_NAMES = ['Chamonix', 'Amsterdam', 'Geneva'];
+
+export {FilterType, SortType, TYPES, CITIES_NAMES};

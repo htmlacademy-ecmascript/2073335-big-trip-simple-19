@@ -13,4 +13,6 @@ function updatePoint(points, update) {
   return points.map((point) => point.id === update.id ? update : point);
 }
 
+//const destinationInfo = tripDestinations.find((item) => item.id === destination);
+
 export {humanizeDate, capitalize, updatePoint};

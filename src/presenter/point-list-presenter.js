@@ -55,21 +55,17 @@ export default class PointListPresenter {
   }
 
   #renderPoint(point) {
-
-
-    const pointData = {
-      point,
-      tripDestinations: this.#destinations,
-      allOffers: this.#allOffers,
-    };
-
     const pointPresenter = new PointPresenter({
       container: this.#tripEventsListView.element,
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange,
-      tripDestination: this.#destinationModel
     });
-    pointPresenter.init(pointData, this.#destinationModel);
+
+    pointPresenter.init({
+      point,
+      tripDestinations: this.#destinations,
+      allOffers: this.#allOffers
+    });
     this.#pointPresenters.set(point.id, pointPresenter);
   }
 
@@ -84,7 +80,7 @@ export default class PointListPresenter {
 
   #renderPoints () {
     for (const point of this.#points) {
-      this.#renderPoint(point, this.#destinations, this.#allOffers);
+      this.#renderPoint(point);
     }
   }
 
