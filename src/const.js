@@ -8,6 +8,5 @@ const SortType = {
   PRICE: 'price',
   DAY: 'day',
 };
-const DESTINATION_NAMES = ['Chamonix', 'Amsterdam', 'Geneva'];
 
-export {FilterType, SortType, DESTINATION_NAMES};
+export {FilterType, SortType};
