@@ -11,10 +11,8 @@ export default class PointPresenter {
   #container = null;
   #pointCardView = null;
   #pointFormView = null;
-  #tripDestinations = null;
   #point = null;
-  #destinations = null;
-  #allOffers = null;
+
   #handleModeChange = null;
   #handlePointChange = null;
 
@@ -27,25 +25,24 @@ export default class PointPresenter {
 
   }
 
-  init(point, allOffers, tripDestinations) {
+  init({point, allOffers, tripDestinations}) {
     this.#point = point;
-    this.#allOffers = allOffers;
-    this.#tripDestinations = tripDestinations;
 
     const prevPointCardView = this.#pointCardView;
     const prevPointFormView = this.#pointFormView;
 
-    this.#pointCardView = new TripEventItemView({... point,
-      ...tripDestinations,
-      ...allOffers,
+    this.#pointCardView = new TripEventItemView({
+      point,
+      tripDestinations,
+      allOffers,
       onEventRollupClick: this.#handleOpenForm,
 
     });
 
     this.#pointFormView = new EditFormView({
-      ... point,
-      ...tripDestinations,
-      ...allOffers,
+      point,
+      tripDestinations,
+      allOffers,
       onFormSubmit: this.#handleSubmitForm,
       onRollupClick: this.#handleCloseForm,
 
@@ -108,8 +105,9 @@ export default class PointPresenter {
     this.#replaceCardToForm();
   };
 
+  //временно поменяла из-за ошибки
   #escKeyDownHandler = (evt) => {
-    if (evt.key.startsWith('Esc')) {
+    if (evt.key === 'Esc' || evt.key === 'Escape') {
       evt.preventDefault();
       this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();
