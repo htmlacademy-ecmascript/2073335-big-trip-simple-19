@@ -4,7 +4,6 @@ import { humanizeDate } from '../utils/common.js';
 function createTemplate(point, tripDestinations, allOffers) {
   const { basePrice, destination, type, offers, dateFrom, dateTo } = point;
 
-
   const destinationInfo = tripDestinations.find((item) => item.id === destination);
   const offersType = allOffers.find((offer) => offer.type === type);
   const checkedOffers = offersType.offers.filter((offer) => offers.includes(offer.id));
