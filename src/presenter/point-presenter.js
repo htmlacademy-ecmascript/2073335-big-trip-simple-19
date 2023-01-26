@@ -80,11 +80,13 @@ export default class PointPresenter {
   }
 
   #replaceCardToForm() {
-    replace(this.#pointFormView, this.#pointCardView);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
+    replace(this.#pointFormView, this.#pointCardView);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+
   }
+
 
   #replaceFormToCard() {
     replace(this.#pointCardView, this.#pointFormView);
@@ -93,6 +95,7 @@ export default class PointPresenter {
   }
 
   #handleCloseForm = () => {
+    this.#pointFormView.reset(this.#point);
     this.#replaceFormToCard();
   };
 
@@ -101,7 +104,6 @@ export default class PointPresenter {
   };
 
   #handleOpenForm = () => {
-    this.#handleModeChange();
     this.#replaceCardToForm();
   };
 
