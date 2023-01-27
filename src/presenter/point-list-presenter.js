@@ -38,6 +38,11 @@ export default class PointListPresenter {
 
   }
 
+  /*
+  get points() {
+    return this.#pointsModel.points;
+  }
+*/
   init() {
     this.#points = [...this.#pointsModel.points];
     this.#destinations = [...this.#pointsModel.tripDestinations];
