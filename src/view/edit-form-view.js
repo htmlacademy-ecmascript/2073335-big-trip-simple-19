@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDate, capitalize } from '../utils/common.js';
-//import flatpickr from 'flatpickr';
-//import 'flatpickr/dist/flatpickr.min.css';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createEmptyPoint() {
   return {
@@ -19,7 +19,6 @@ const BLANK_DESTINATION = {
   description: '',
   pictures: [],
   offers: [],
-  type: ''
 };
 
 const BLANK_OFFER = {
@@ -27,27 +26,24 @@ const BLANK_OFFER = {
   offers: [],
 };
 
-function createPicturesListTemplate(picture) {
-  let template = '';
-  if (picture) {
-    template = picture.pictures.map((item) => `<img class="event__photo" src=${item.src} alt="${item.description}">`
-    ).join('');
-  }
-  return template;
+function createPicturesListTemplate(pictures) {
+  return pictures
+    .map(({ src, description }) => `<img class="event__photo" src=${src} alt="${description}">`)
+    .join('');
 }
 
 function createTripTypeTemplate(allOffers, point) {
   return allOffers.map(({type, id}) =>
     `<div class="event__type-item">
-      <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${point.type === type ? 'checked' : ''}>
+      <input id="event-type-${type}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${point.type === type ? 'checked' : ''}> 
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${id}">${capitalize(type)}</label>
     </div>`).join('');
 }
 
-function createOffersTemplate(offerByType, offers, point) {
+function createOffersTemplate(offerByType) {
   return offerByType.offers.map(({title, price, id}) =>
     `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${point.id.includes(point.id) ? 'checked' : ''} data-offer-id="${id}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${offerByType.type.includes(offerByType.type) ? 'checked' : ''} data-offer-id="${id}">
         <label class="event__offer-label" for="event-offer-${title}-${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
@@ -56,10 +52,11 @@ function createOffersTemplate(offerByType, offers, point) {
       </div>`).join('');
 }
 
-function createTemplate(point, tripDestinations, allOffers) {
-  const { basePrice, destination, dateFrom, dateTo, type} = point;
+function createTemplate(state, tripDestinations, allOffers,) {
+  const {isEdit, ...point} = state;
+  const { basePrice, destination, dateFrom, dateTo, type} = point ?? createEmptyPoint();
 
-  const destinationInfo = tripDestinations.find((item) => item.id === destination);
+  // const destinationInfo = tripDestinations.find((item) => item.id === destination);
 
   const {offers, type: offerType } = allOffers.find((offer) => offer.type === type) ?? BLANK_OFFER;
   const { name: descriptionName, description, pictures} = tripDestinations.find((item) => item.id === destination) ?? BLANK_DESTINATION;
@@ -109,14 +106,14 @@ function createTemplate(point, tripDestinations, allOffers) {
             <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" value="${basePrice}">
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${point.isEdit ? 'Delete' : 'Cancel'}</button>
-          ${point.isEdit ? '<button class="event__rollup-btn" type="button">' : ''}
+          <button class="event__reset-btn" type="reset">${isEdit ? 'Delete' : 'Cancel'}</button>
+          ${isEdit ? '<button class="event__rollup-btn" type="button">' : ''}
             <span class="visually-hidden">Open event</span>
           </button>
         </header>
         <section class="event__details">
         ${
-    point.isEdit ?
+    offerByType.offers.length > 0 ?
       `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
@@ -134,7 +131,7 @@ function createTemplate(point, tripDestinations, allOffers) {
             <p class="event__destination-description">${description}</p>
             <div class="event__photos-container">
             <div class="event__photos-tape">
-            ${pictures.length > 0 ? createPicturesListTemplate(destinationInfo) : ''}
+            ${pictures.length > 0 ? createPicturesListTemplate(pictures) : ''}
             </div>
           </div>
           </div>
@@ -154,8 +151,8 @@ export default class EditFormView extends AbstractStatefulView {
   #allOffers = null;
   #handleFormSubmit = null;
   #handleRollupClick = null;
-  // #datepickerFrom = null; подготовка к следующему заданию
-  // #datepickerTo = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   constructor({ point = createEmptyPoint(), tripDestinations, allOffers, onFormSubmit, onRollupClick}) {
     super();
@@ -175,28 +172,25 @@ export default class EditFormView extends AbstractStatefulView {
 
   _restoreHandlers() {
     const element = this.element;
-    const eventRollupBtn = element.querySelector('.event__rollup-btn');
     const eventAvailableOffers = element.querySelector('.event__available-offers');
 
-    if (eventRollupBtn) {
-      eventRollupBtn.addEventListener('click', this.#rollupEventClickHandler);
-    }
     if (eventAvailableOffers) {
       eventAvailableOffers.addEventListener('change', this.#offerChangeHandler);
     }
 
+    element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#rollupEventClickHandler);
     element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    // this.#setDateFromPicker();
-    // this.#setDateToPicker();
+    this.#setDateFromPicker();
+    this.#setDateToPicker();
   }
 
   reset(point) {
     this.updateElement(EditFormView.parsePointToState(point));
   }
 
-  /* Подготовка к след заданию
+
   removeElement = () => {
     super.removeElement();
 
@@ -210,7 +204,7 @@ export default class EditFormView extends AbstractStatefulView {
       this.#datepickerTo = null;
     }
   };
-*/
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditFormView.parseStateToPoint(this._state));
@@ -235,12 +229,11 @@ export default class EditFormView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
-    const selectedDestination = this.#tripDestinations.find((destination) => evt.target.value === destination.name);
-    if (selectedDestination !== null) {
-      this.updateElement({
-        destination: selectedDestination.id,
-      });
-    }
+    const destinationName = evt.target.value;
+    const selectedDestination = this.#tripDestinations.find(({name}) => name === destinationName) ?? BLANK_DESTINATION;
+    this.updateElement({
+      destination: selectedDestination.id,
+    });
   };
 
 
@@ -257,7 +250,7 @@ export default class EditFormView extends AbstractStatefulView {
 
     this._setState({ offers: updatedOffers }); };
 
-  /* Подготовка к след заданию
+
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate
@@ -297,7 +290,7 @@ export default class EditFormView extends AbstractStatefulView {
       }
     );
   };
-*/
+
 
   static parsePointToState(point) {
   //  const destinationId = point.destination;
