@@ -278,17 +278,19 @@ export default class EditFormView extends AbstractStatefulView {
     this._setState({ offers: updatedOffers }); };
 
 
-  #dateFromChangeHandler([userDate]) {
+  #dateFromChangeHandler = ([dateFrom]) => {
     this._setState({
-      dateFrom: userDate,
+      dateFrom: dateFrom
     });
-  }
+    this.#setDateToPicker();
+  };
 
-  #dateToChangeHandler([userDate]) {
-    this.updateElement({
-      dateTo: userDate
+  #dateToChangeHandler = ([dateTo]) => {
+    this._setState({
+      dateTo: dateTo
     });
-  }
+    this.#setDateFromPicker();
+  };
 
   static parsePointToState(point) {
     return { ...point,
