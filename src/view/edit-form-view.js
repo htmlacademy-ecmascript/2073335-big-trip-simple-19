@@ -40,10 +40,10 @@ function createTripTypeTemplate(allOffers, point) {
     </div>`).join('');
 }
 
-function createOffersTemplate(offerByType, offers, point) {
-  return offerByType.offers.map(({title, price, id}) =>
+function createOffersTemplate(offers, point) {
+  return offers.map(({title, price, id}) =>
     `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${point.offers.includes(id) ? 'checked' : ''} data-offer-id="${point.id}">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${title}-${id}" type="checkbox" name="event-offer-${title}" ${point.offers.includes(id) ? 'checked' : ''} data-offer-id="${id}">
         <label class="event__offer-label" for="event-offer-${title}-${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
@@ -58,7 +58,7 @@ function createTemplate(state, tripDestinations, allOffers,) {
   const { name: descriptionName, description, pictures} = tripDestinations.find((item) => item.id === destination) ?? BLANK_DESTINATION;
   const offerByType = allOffers.find((offer) => offer.type === type) ?? BLANK_OFFER;
   const destinationsOptionValueTemplate = tripDestinations.map((item) => `<option value="${item.name}"></option>`).join('');
-  const offers = offerByType.offers;
+  const typeOffers = offerByType.offers;
 
   return (
     `<li class="trip-events__item">
@@ -114,7 +114,7 @@ function createTemplate(state, tripDestinations, allOffers,) {
       `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
-            ${createOffersTemplate(offerByType, offers, point)}
+            ${createOffersTemplate( typeOffers, point)}
             
           </section>`
       : ''
@@ -175,7 +175,7 @@ export default class EditFormView extends AbstractStatefulView {
     element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
     element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+    element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
     this.#setDateFromPicker();
     this.#setDateToPicker();
   }
@@ -206,10 +206,7 @@ export default class EditFormView extends AbstractStatefulView {
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
         enableTime: true,
-        //чтобы нельзя было выбрать дату до сегодняшнего дня
-        minDate: this._state.dateFrom,
         maxDate: this._state.dateTo
-
       }
     );
   }
@@ -229,10 +226,12 @@ export default class EditFormView extends AbstractStatefulView {
 
   #priceInputHandler = (evt) => {
     evt.preventDefault();
+
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value)
     });
   };
+
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -279,17 +278,13 @@ export default class EditFormView extends AbstractStatefulView {
 
 
   #dateFromChangeHandler = ([dateFrom]) => {
-    this._setState({
-      dateFrom: dateFrom
-    });
-    this.#setDateToPicker();
+    this.#datepickerTo.set('minDate', dateFrom);
+    this._setState({ dateFrom });
   };
 
   #dateToChangeHandler = ([dateTo]) => {
-    this._setState({
-      dateTo: dateTo
-    });
-    this.#setDateFromPicker();
+    this.#datepickerFrom.set('maxDate', dateTo);
+    this._setState({ dateTo });
   };
 
   static parsePointToState(point) {
