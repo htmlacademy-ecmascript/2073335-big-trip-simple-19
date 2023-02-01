@@ -12,4 +12,8 @@ function updatePoint(points, update) {
   return points.map((point) => point.id === update.id ? update : point);
 }
 
-export {humanizeDate, capitalize, updatePoint};
+function isDatesEqual(dateA, dateB) {
+  return dayjs(dateA).isSame(dateB, 'D');
+}
+
+export {humanizeDate, capitalize, updatePoint, isDatesEqual};

@@ -1,6 +1,8 @@
+import { UserAction, UpdateType } from '../const.js';
 import { render, replace, remove } from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import TripEventItemView from '../view/trip-events-item-view.js';
+import {isDatesEqual} from '../utils/common.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -45,7 +47,7 @@ export default class PointPresenter {
       allOffers,
       onFormSubmit: this.#handleSubmitForm,
       onRollupClick: this.#handleCloseForm,
-
+      onResetClick: this.#handleResetClick,
     });
 
     if (prevPointCardView === null || prevPointFormView === null) {
@@ -99,12 +101,31 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleSubmitForm = () => {
+  #handleSubmitForm = (point, tripDestinations, allOffers) => {
+    const isMinor =
+    !isDatesEqual(this.#point.dateFrom, point.dateFrom) ||
+    !isDatesEqual(this.#point.dateTo, point.dateTo);
+
+    this.#handlePointChange(
+      UserAction.UPDATE_POINT,
+      isMinor ? UpdateType.MINOR : UpdateType.PATCH,
+      point,
+      tripDestinations,
+      allOffers
+    );
     this.#replaceFormToCard();
   };
 
   #handleOpenForm = () => {
     this.#replaceCardToForm();
+  };
+
+  #handleResetClick = (point) => {
+    this.#handlePointChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
   //временно поменяла из-за ошибки
