@@ -1,21 +1,54 @@
-import { getRandomPoint, tripDestinations, offersByType } from '../mock/mock.js';
+import { getRandomPoint, } from '../mock/mock.js';
+import Observable from '../framework/observable.js';
+import { nanoid } from 'nanoid';
 
 const WAYPOINTS_COUNT = 3;
 
-export default class PointsModel {
+export default class PointsModel extends Observable {
   #points = Array.from({ length: WAYPOINTS_COUNT }, getRandomPoint);
-  #tripDestinations = tripDestinations;
-  #offersByType = offersByType;
 
   get points() {
     return this.#points;
   }
 
-  get tripDestinations() {
-    return this.#tripDestinations;
+  updatePoint(updateType, update) {
+    const index = this.#points.findIndex((point) => point.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting point');
+    }
+
+    this.#points = [
+      ...this.#points.slice(0, index),
+      update,
+      ...this.#points.slice(index + 1)
+    ];
+
+    this._notify(updateType, update);
   }
 
-  get offersByType() {
-    return this.#offersByType;
+  addPoint(updateType, update) {
+    update.id = nanoid();
+    this.#points = [
+      update,
+      ...this.#points,
+    ];
+
+    this._notify(updateType, update);
+  }
+
+  deletePoint(updateType, update) {
+    const index = this.#points.findIndex((point) => point.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting point');
+    }
+
+    this.#points = [
+      ...this.#points.slice(0, index),
+      ...this.#points.slice(index + 1)
+    ];
+
+    this._notify(updateType);
   }
 }

@@ -1,6 +1,8 @@
+import { UserAction, UpdateType } from '../const.js';
 import { render, replace, remove } from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import TripEventItemView from '../view/trip-events-item-view.js';
+import {isDatesEqual} from '../utils/common.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -45,7 +47,7 @@ export default class PointPresenter {
       allOffers,
       onFormSubmit: this.#handleSubmitForm,
       onRollupClick: this.#handleCloseForm,
-
+      onResetClick: this.#handleResetClick,
     });
 
     if (prevPointCardView === null || prevPointFormView === null) {
@@ -81,10 +83,9 @@ export default class PointPresenter {
 
   #replaceCardToForm() {
     this.#handleModeChange();
-    this.#mode = Mode.EDITING;
     replace(this.#pointFormView, this.#pointCardView);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-
+    this.#mode = Mode.EDITING;
   }
 
 
@@ -99,7 +100,16 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleSubmitForm = () => {
+  #handleSubmitForm = (point) => {
+    const isMinor =
+    !isDatesEqual(this.#point.dateFrom, point.dateFrom) ||
+    !isDatesEqual(this.#point.dateTo, point.dateTo);
+
+    this.#handlePointChange(
+      UserAction.UPDATE_POINT,
+      isMinor ? UpdateType.MINOR : UpdateType.PATCH,
+      point
+    );
     this.#replaceFormToCard();
   };
 
@@ -107,9 +117,16 @@ export default class PointPresenter {
     this.#replaceCardToForm();
   };
 
-  //временно поменяла из-за ошибки
+  #handleResetClick = (point) => {
+    this.#handlePointChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+  };
+
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Esc' || evt.key === 'Escape') {
+    if (evt.key?.startsWith('Esc')) {
       evt.preventDefault();
       this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();
