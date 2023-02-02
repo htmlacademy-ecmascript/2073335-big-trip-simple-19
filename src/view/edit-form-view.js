@@ -4,17 +4,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
-function createEmptyPoint() {
-  return {
-    basePrice: 0,
-    dateFrom: new Date(),
-    dateTo: new Date(),
-    destination: 0,
-    offers: [],
-    type: 'flight',
-  };
-}
-
 const BLANK_DESTINATION = {
   id: 0,
   name: '',
@@ -27,6 +16,17 @@ const BLANK_OFFER = {
   type: '',
   offers: [],
 };
+
+function createEmptyPoint() {
+  return {
+    basePrice: 0,
+    dateFrom: new Date(),
+    dateTo: new Date(),
+    destination: 0,
+    offers: [],
+    type: 'flight',
+  };
+}
 
 function createPicturesListTemplate(pictures) {
   return pictures
@@ -102,7 +102,7 @@ function createTemplate(state, tripDestinations, allOffers,) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" value="${he.encode(basePrice.toString())}" required>
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" min="1" value="${basePrice}" required>
           </div>
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">${isEdit ? 'Delete' : 'Cancel'}</button>

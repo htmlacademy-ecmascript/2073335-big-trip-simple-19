@@ -28,7 +28,6 @@ export default class PointListPresenter {
   #filterType = FilterType.EVERYTHING;
 
   #pointPresenters = new Map();
-  #newPointPresenters = new Map();
 
   constructor({container, pointsModel, tripDestinationModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#container = container;
@@ -76,6 +75,7 @@ export default class PointListPresenter {
   createPoint() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    remove(this.#emptyListView);
     this.#newPointPresenter.init({
       tripDestinations: this.destinations,
       allOffers: this.offers
@@ -109,7 +109,7 @@ export default class PointListPresenter {
     this.#emptyListView = new EmptyListView({
       filterType: this.#filterType
     });
-    render(this.#emptyListView, this.#container, RenderPosition.AFTERBEGIN);
+    render(this.#emptyListView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
   }
 
   #clear({resetSortType = false} = {}) {
@@ -148,10 +148,10 @@ export default class PointListPresenter {
     render(this.#tripEventsView, this.#container);
   }
 
-  #handleModelEvent = (updateType, point, offers, destination) => {
+  #handleModelEvent = (updateType, point) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(point.id).init(point, offers, destination);
+        this.#pointPresenters.get(point.id).init(point);
         break;
       case UpdateType.MINOR:
         this.#clear();

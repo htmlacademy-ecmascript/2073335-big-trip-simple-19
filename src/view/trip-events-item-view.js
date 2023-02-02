@@ -8,7 +8,7 @@ function createTemplate(point, tripDestinations, allOffers) {
   const offersType = allOffers.find((offer) => offer.type === type);
   const checkedOffers = offersType.offers.filter((offer) => offers.includes(offer.id));
 
-  const createOffersListTemplate = () => {
+  function createOffersListTemplate() {
     if (checkedOffers.length === 0) {
       return (
         `<li class="event__offer">
@@ -22,7 +22,7 @@ function createTemplate(point, tripDestinations, allOffers) {
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </li>`).join('');
-  };
+  }
 
   return (
     `<li class="trip-events__item">

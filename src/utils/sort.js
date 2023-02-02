@@ -9,7 +9,6 @@ const sortByTime = (waypointA, waypointB)=>{
 
 const sortByPrice = (waypointA, waypointB)=> waypointB.basePrice - waypointA.basePrice;
 
-
 const sortByDay = (waypointA, waypointB)=>dayjs(waypointA.dateFrom).diff(dayjs(waypointB.dateFrom));
 
 export{ sortByTime, sortByPrice, sortByDay};

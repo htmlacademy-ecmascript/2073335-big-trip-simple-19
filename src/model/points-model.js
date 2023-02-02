@@ -1,4 +1,4 @@
-import { getRandomPoint, tripDestinations, offersByType } from '../mock/mock.js';
+import { getRandomPoint, } from '../mock/mock.js';
 import Observable from '../framework/observable.js';
 import { nanoid } from 'nanoid';
 
@@ -6,8 +6,6 @@ const WAYPOINTS_COUNT = 3;
 
 export default class PointsModel extends Observable {
   #points = Array.from({ length: WAYPOINTS_COUNT }, getRandomPoint);
-  #tripDestinations = tripDestinations;
-  #offersByType = offersByType;
 
   get points() {
     return this.#points;

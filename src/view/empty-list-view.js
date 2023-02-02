@@ -8,13 +8,11 @@ const messageForFilter = {
 
 
 function createTemplate(filterType) {
-  const messageValue = messageForFilter[filterType];
-
-  return `<p class="trip-events__msg">${messageValue}</p>`;
+  return `<p class="trip-events__msg">${messageForFilter[filterType]}</p>`;
 }
 
 export default class EmptyListView extends AbstractView {
-  #filterType = null;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({filterType}) {
     super();

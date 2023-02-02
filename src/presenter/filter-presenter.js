@@ -1,7 +1,6 @@
 import { FilterType, UpdateType } from '../const.js';
 import { remove, render, replace } from '../framework/render';
 import { filterTypeToFilter } from '../utils/filter.js';
-//import { filterTypeToFilter } from '../utils/filter.js';
 import FilterView from '../view/filter-view';
 
 
@@ -28,7 +27,7 @@ export default class FilterPresenter {
       {
         type: FilterType.EVERYTHING,
         name: 'everything',
-        count: filterTypeToFilter[FilterType.EVERYTHING](points).length
+        count: points.length
       },
       {
         type: FilterType.FUTURE,

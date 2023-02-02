@@ -1,7 +1,6 @@
 import {tripDestinations} from '../mock/mock.js';
-import Observable from '../framework/observable.js';
 
-export default class TripDestinationsModel extends Observable {
+export default class TripDestinationsModel {
   #tripDestinations = tripDestinations;
 
   get tripDestinations() {

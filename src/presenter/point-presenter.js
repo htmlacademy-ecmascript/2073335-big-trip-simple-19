@@ -83,10 +83,9 @@ export default class PointPresenter {
 
   #replaceCardToForm() {
     this.#handleModeChange();
-    this.#mode = Mode.EDITING;
     replace(this.#pointFormView, this.#pointCardView);
     document.addEventListener('keydown', this.#escKeyDownHandler);
-
+    this.#mode = Mode.EDITING;
   }
 
 
@@ -101,7 +100,7 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleSubmitForm = (point, tripDestinations, allOffers) => {
+  #handleSubmitForm = (point) => {
     const isMinor =
     !isDatesEqual(this.#point.dateFrom, point.dateFrom) ||
     !isDatesEqual(this.#point.dateTo, point.dateTo);
@@ -109,9 +108,7 @@ export default class PointPresenter {
     this.#handlePointChange(
       UserAction.UPDATE_POINT,
       isMinor ? UpdateType.MINOR : UpdateType.PATCH,
-      point,
-      tripDestinations,
-      allOffers
+      point
     );
     this.#replaceFormToCard();
   };
@@ -128,9 +125,8 @@ export default class PointPresenter {
     );
   };
 
-  //временно поменяла из-за ошибки
   #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Esc' || evt.key === 'Escape') {
+    if (evt.key?.startsWith('Esc')) {
       evt.preventDefault();
       this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();

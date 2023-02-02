@@ -1,7 +1,5 @@
 import PointListPresenter from './presenter/point-list-presenter.js';
 import PointsModel from './model/points-model.js';
-//import MainPresenter from './presenter/main-presenter.js';
-//import { generateFilters } from './mock/filter.js';
 import TripDestinationsModel from './model/trip-destinations-model.js';
 import OffersModel from './model/offers-model.js';
 import FilterModel from './model/filter-model.js';
@@ -12,7 +10,6 @@ import { render } from './framework/render.js';
 
 const tripMainElement = document.querySelector('.trip-main');
 const tripFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
-//const mainEventsElement = document.querySelector('.trip-events');
 const pageBodyElement = document.querySelector('.page-body__page-main');
 const pageBodyContainerElement = pageBodyElement.querySelector('.page-body__container');
 
@@ -41,18 +38,14 @@ const newPointButtonView = new NewPointButtonView ({
 });
 
 function handleNewPointFormClose() {
-  newPointButtonView.element.disabled = false;
+  newPointButtonView.setEnable();
 }
 
 function handleNewPointButtonClick() {
   pointListPresenter.createPoint();
-  newPointButtonView.element.disabled = true;
+  newPointButtonView.setDisable();
 }
 render(newPointButtonView, tripMainElement);
 
-//Решила отказаться от мейнпрезентера. Этот закоментированный код  и лишние файлы удалю после правок если будут
-//const mainPresenter = new MainPresenter({container: headerElement, filters});
-//render(new NewEventButtonView(), tripMainElement);
-//mainPresenter.init();
 filterPresenter.init();
 pointListPresenter.init();
