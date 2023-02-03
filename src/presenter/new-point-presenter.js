@@ -1,5 +1,4 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-
 import {UserAction, UpdateType} from '../const.js';
 import EditFormView from '../view/edit-form-view.js';
 
@@ -45,13 +44,31 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#newPointView.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#newPointView.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#newPointView.shake(resetFormState);
+  }
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
       {...point},
     );
-    this.destroy();
   };
 
   #handleResetClick = () => {
