@@ -32,8 +32,8 @@ export default class PointListPresenter {
   #isLoading = true;
 
   #uiBlocker = new UiBlocker({
-    lowerLimit: TimeLimit.LOWER_LIMIT,
-    upperLimit: TimeLimit.UPPER_LIMIT
+    lowerLimit: TimeLimit.LOWER,
+    upperLimit: TimeLimit.UPPER
   });
 
   #pointPresenters = new Map();
@@ -153,27 +153,17 @@ export default class PointListPresenter {
       return;
     }
 
-    if (this.points.length === 0 && this.offers.length === 0 && this.destinations.length === 0) {
-      this.#renderError();
-      return;
-    }
-
-    this.#renderSort();
-
-    if (this.points.length === 0) {
+    if (this.points.length === 0 && !this.#isLoading) {
       this.#renderNoPoint();
       return;
     }
+    this.#renderSort();
     this.#renderPoints();
     this.#renderList();
   }
 
   #renderLoadingMessage() {
     render(this.#loadingView, this.#tripEventsListView.element);
-  }
-
-  #renderError() {
-    render(this.#errorView, this.TripEventsListView.element);
   }
 
   #handleModelEvent = (updateType, point) => {

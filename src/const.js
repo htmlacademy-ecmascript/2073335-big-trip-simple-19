@@ -13,8 +13,6 @@ const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
   DELETE_POINT: 'DELETE_POINT',
-  MAJOR: 'MAJOR',
-  INIT: 'INIT'
 };
 
 const UpdateType = {
@@ -25,9 +23,10 @@ const UpdateType = {
 };
 
 const TimeLimit = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000
+  LOWER: 350,
+  UPPER: 1000
 };
+
 
 export {FilterType, SortType, UserAction, UpdateType, TimeLimit};
 

@@ -305,7 +305,6 @@ export default class EditFormView extends AbstractStatefulView {
       isDisabled: false,
       isSaving: false,
       isDeleting: false
-
     };
   }
 

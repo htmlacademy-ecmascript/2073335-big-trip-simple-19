@@ -59,18 +59,12 @@ export default class PointApiService extends ApiService {
   }
 
   #adaptToServer(point) {
-    const adaptedPoint = {
-      ...point,
-      'base_price': +point.basePrice,
-      'date_from': new Date(point.dateFrom).toISOString(),
-      'date_to': new Date(point.dateTo).toISOString(),
+    const { basePrice, dateFrom, dateTo, ...adaptedPoint } = point;
+    return {
+      ...adaptedPoint,
+      'base_price': +basePrice,
+      'date_from': dateFrom.toISOString(),
+      'date_to': dateTo.toISOString(),
     };
-
-    delete adaptedPoint.basePrice;
-    delete adaptedPoint.dateFrom;
-    delete adaptedPoint.dateTo;
-
-
-    return adaptedPoint;
   }
 }

@@ -61,8 +61,6 @@ export default class PointPresenter {
 
     if (this.#mode === Mode.EDITING) {
       replace(this.#pointFormView, prevPointFormView);
-      this.#mode = Mode.DEFAULT;
-
     }
 
     remove(prevPointCardView);
