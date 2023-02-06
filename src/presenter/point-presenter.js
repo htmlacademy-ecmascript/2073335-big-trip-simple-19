@@ -60,7 +60,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointFormView, prevPointFormView);
+      replace(this.#pointCardView, prevPointFormView);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointCardView);
@@ -83,7 +84,7 @@ export default class PointPresenter {
     if (this.#mode === Mode.EDITING) {
       this.#pointFormView.updateElement({
         isDisabled: true,
-        isSaving: true
+        isSaving: true,
       });
     }
   }
@@ -92,7 +93,7 @@ export default class PointPresenter {
     if (this.#mode === Mode.EDITING) {
       this.#pointFormView.updateElement({
         isDisabled: true,
-        isDeleting: true
+        isDeleting: true,
       });
     }
   }

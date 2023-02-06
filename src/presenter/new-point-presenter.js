@@ -36,6 +36,7 @@ export default class NewPointPresenter {
     if (this.#newPointView === null) {
       return;
     }
+
     this.#handleDestroy();
 
     remove(this.#newPointView);
@@ -47,7 +48,7 @@ export default class NewPointPresenter {
   setSaving() {
     this.#newPointView.updateElement({
       isDisabled: true,
-      isSaving: true
+      isSaving: true,
     });
   }
 
@@ -67,7 +68,7 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {...point},
+      point,
     );
   };
 
