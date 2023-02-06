@@ -26,12 +26,12 @@ export default class FilterPresenter {
     return [
       {
         type: FilterType.EVERYTHING,
-        name: 'everything',
+        name: FilterType.EVERYTHING.toLowerCase(),
         count: points.length
       },
       {
         type: FilterType.FUTURE,
-        name: 'future',
+        name: FilterType.FUTURE.toLowerCase(),
         count: filterTypeToFilter[FilterType.FUTURE](points).length
       }
     ];

@@ -60,9 +60,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointFormView, prevPointFormView);
-
-
+      replace(this.#pointCardView, prevPointFormView);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointCardView);
@@ -72,6 +71,7 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointCardView);
     remove(this.#pointFormView);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   resetView() {
@@ -81,18 +81,56 @@ export default class PointPresenter {
     }
   }
 
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointFormView.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointFormView.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointCardView.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointFormView.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointFormView.shake(resetFormState);
+  }
+
+
   #replaceCardToForm() {
     this.#handleModeChange();
     replace(this.#pointFormView, this.#pointCardView);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.EDITING;
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+
   }
 
 
   #replaceFormToCard() {
     replace(this.#pointCardView, this.#pointFormView);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
     this.#mode = Mode.DEFAULT;
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+
   }
 
   #handleCloseForm = () => {
@@ -110,7 +148,6 @@ export default class PointPresenter {
       isMinor ? UpdateType.MINOR : UpdateType.PATCH,
       point
     );
-    this.#replaceFormToCard();
   };
 
   #handleOpenForm = () => {
