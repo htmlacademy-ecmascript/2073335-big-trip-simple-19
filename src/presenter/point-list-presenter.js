@@ -103,7 +103,7 @@ export default class PointListPresenter {
     render(this.#sortView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
   }
 
-  renderNoPoint () {
+  #renderNoPoint () {
     this.#emptyListView = new EmptyListView({
       filterType: this.#filterType
     });
@@ -151,7 +151,7 @@ export default class PointListPresenter {
 
       this.#renderPoints();
     } else {
-      this.renderNoPoint();
+      this.#renderNoPoint();
     }
   }
 

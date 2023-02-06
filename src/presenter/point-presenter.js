@@ -71,6 +71,7 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointCardView);
     remove(this.#pointFormView);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
   resetView() {
@@ -120,7 +121,7 @@ export default class PointPresenter {
     this.#handleModeChange();
     replace(this.#pointFormView, this.#pointCardView);
     this.#mode = Mode.EDITING;
-    document.addEventListener('keydown', this.#escKeyDownHandler, {once: true});
+    document.addEventListener('keydown', this.#escKeyDownHandler);
 
   }
 
@@ -166,8 +167,6 @@ export default class PointPresenter {
       evt.preventDefault();
       this.#pointFormView.reset(this.#point);
       this.#replaceFormToCard();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
-
     }
   };
 }
