@@ -72,14 +72,13 @@ export default class PointListPresenter {
   }
 
   createPoint() {
+
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    remove(this.#emptyListView);
     this.#newPointPresenter.init({
       tripDestinations: this.#pointsModel.destinations,
       allOffers: this.#pointsModel.offers,
     });
-
   }
 
   #renderPoint(point) {
@@ -110,7 +109,7 @@ export default class PointListPresenter {
     this.#emptyListView = new EmptyListView({
       filterType: this.#filterType
     });
-    render(this.#emptyListView, this.#tripEventsView.element, RenderPosition.AFTERBEGIN);
+    render(this.#emptyListView, this.#tripEventsView.element);
   }
 
   #renderList () {
@@ -142,7 +141,7 @@ export default class PointListPresenter {
       return;
     }
 
-    if (pointsCount) {
+    if (pointsCount > 0) {
       remove(this.#emptyListView);
       this.#renderSort();
 

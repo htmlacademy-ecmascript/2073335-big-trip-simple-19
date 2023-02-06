@@ -29,7 +29,7 @@ export default class NewPointPresenter {
 
     render(this.#newPointView, this.#container, RenderPosition.AFTERBEGIN);
 
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#escKeyDownHandler, {once: true});
   }
 
   destroy() {

@@ -1,13 +1,11 @@
-import dayjs from 'dayjs';
 import { FilterType } from '../const.js';
-
-function isPointFuture (date) {
-  return dayjs().isBefore(date, 'day') || dayjs().isSame(date, 'day');
-}
 
 const filterTypeToFilter = {
   [FilterType.EVERYTHING]: (points) => points.slice(),
-  [FilterType.FUTURE]: (points) => points.filter((point) => isPointFuture(point.dateFrom) || isPointFuture(point.dateTo)),
+  [FilterType.FUTURE]: (points, dateNow = Date.now()) => points.filter(({ dateFrom, dateTo }) =>
+    dateFrom.getTime() >= dateNow ||
+  (dateFrom.getTime() < dateNow && dateTo.getTime() > dateNow)
+  )
 };
 
 export { filterTypeToFilter };
