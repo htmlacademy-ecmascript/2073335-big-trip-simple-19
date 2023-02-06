@@ -6,7 +6,7 @@ import NewPointButtonView from './view/new-event-button-view.js';
 import { render } from './framework/render.js';
 import PointApiService from './api-service.js';
 
-const AUTHORIZATION = 'Basic bq4poM49baal4pi6pl';
+const AUTHORIZATION = 'Basic bq4po49baal4pi6l';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip-simple';
 
 const tripMainElement = document.querySelector('.trip-main');
