@@ -123,9 +123,10 @@ export default class PointListPresenter {
   }
 
   #renderPoints () {
-    for (const point of this.points) {
+    this.points.forEach((point) => {
       this.#renderPoint(point);
-    }
+    });
+
   }
 
   #renderTripEventsView () {
