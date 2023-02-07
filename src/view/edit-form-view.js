@@ -213,7 +213,8 @@ export default class EditFormView extends AbstractStatefulView {
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
         enableTime: true,
-        maxDate: this._state.dateTo
+        maxDate: this._state.dateTo,
+        'time_24hr': true
       }
     );
   }
@@ -227,6 +228,7 @@ export default class EditFormView extends AbstractStatefulView {
         onChange: this.#dateToChangeHandler,
         enableTime: true,
         minDate: this._state.dateFrom,
+        'time_24hr': true
       }
     );
   }
@@ -277,17 +279,20 @@ export default class EditFormView extends AbstractStatefulView {
 
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
-    const currentOfferId = Number(evt.target.dataset.offerId);
-    const { offers } = this._state;
+    evt.target.toggleAttribute('checked');
 
-    const currentOfferIndex = offers.indexOf(currentOfferId);
+    let selectedOffers = this._state.offers;
 
-    const updatedOffers = currentOfferIndex === -1
-      ? offers.concat(currentOfferId)
-      : offers.slice().splice(currentOfferIndex, 1);
+    if (evt.target.hasAttribute('checked')) {
+      selectedOffers.push(+(evt.target.dataset.offerId));
+    } else {
+      selectedOffers = selectedOffers.filter((id) => id !== +(evt.target.dataset.offerId));
+    }
 
-    this._setState({ offers: updatedOffers }); };
-
+    this._setState({
+      offers: selectedOffers
+    });
+  };
 
   #dateFromChangeHandler = ([dateFrom]) => {
     this.#datepickerTo.set('minDate', dateFrom);
